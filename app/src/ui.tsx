@@ -6,7 +6,7 @@ import { Dashboard } from './Dashboard';
 export function Wordmark() {
   return (
     <span className="wordmark">
-      Notice<span>TV</span>
+      Ndash
       <i />
     </span>
   );

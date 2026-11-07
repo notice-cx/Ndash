@@ -1,0 +1,10 @@
+[Unit]
+Description=NdashOS: log one line of box health (temperature, power, network) to the journal
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/ndash/health-log.sh
+SyslogIdentifier=ndash-health
+# Output at notice; LogLevelMax drops PID 1's per-run "Starting/Finished" info lines.
+SyslogLevel=notice
+LogLevelMax=notice

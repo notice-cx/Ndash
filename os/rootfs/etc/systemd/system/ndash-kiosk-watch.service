@@ -1,0 +1,10 @@
+[Unit]
+Description=NdashOS: restart the kiosk if Chromium has quit, reload a page left blank
+
+[Service]
+ExecStart=/usr/local/lib/ndash/kiosk-watch.sh
+Restart=on-failure
+SyslogIdentifier=ndash-kiosk-watch
+
+[Install]
+WantedBy=multi-user.target

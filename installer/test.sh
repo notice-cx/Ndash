@@ -1,15 +1,15 @@
 #!/bin/sh
 # End-to-end test of the installer, in QEMU with Secure Boot on: boot the installer from a USB
-# stick onto a blank 16 GB NVMe drive, then boot that drive alone, and check that NoticeTV grew
+# stick onto a blank 16 GB NVMe drive, then boot that drive alone, and check that NdashOS grew
 # into the whole drive, started its kiosk, and holds the Wi-Fi network and dashboard it was given.
-#   installer/test.sh dist/noticetv-installer-<version>-x86_64.img
+#   installer/test.sh dist/ndash-installer-<version>-x86_64.img
 # Output in dist/installer-test/: both boots' serial logs and screen.ppm, the installed drive's
 # screen at the end. Needs Linux with qemu-system-x86_64, OVMF (with its Secure Boot variant),
 # mtools, gdisk and e2fsprogs.
 set -eu
 
 cd "$(dirname "$0")/.."
-INSTALLER=${1:?usage: installer/test.sh dist/noticetv-installer-<version>-x86_64.img}
+INSTALLER=${1:?usage: installer/test.sh dist/ndash-installer-<version>-x86_64.img}
 WORK=${WORK:-build}/installer-test
 OUT=${DIST:-dist}/installer-test
 OVMF_CODE=${OVMF_CODE_SECBOOT:-/usr/share/OVMF/OVMF_CODE_4M.secboot.fd}
@@ -40,19 +40,19 @@ QEMU="qemu-system-x86_64 -machine q35,smm=on $ACCEL -smp 2 -m 3072
     -drive if=pflash,format=raw,readonly=on,file=$OVMF_CODE
     -drive if=pflash,format=raw,file=$WORK/vars.fd
     -drive id=drive,if=none,format=raw,file=$WORK/drive.img
-    -device nvme,drive=drive,serial=NOTICETVTEST
+    -device nvme,drive=drive,serial=NDASHTEST
     -nic user,model=e1000 -display none"
 
-# The test's own copy of the stick boots with noticetv.installer=test (these answers instead of
+# The test's own copy of the stick boots with ndash.installer=test (these answers instead of
 # questions, a power-off when done) and its console on the serial port.
-TEST_SSID=NoticeTVTest
-TEST_PASSWORD=noticetv-test-key
+TEST_SSID=NdashTest
+TEST_PASSWORD=ndash-test-key
 TEST_DASHBOARD=https://example.com/
 cp "$INSTALLER" "$WORK/usb.img"
 USB_ESP="$WORK/usb.img@@1048576"
 mcopy -n -i "$USB_ESP" ::boot/grub/grub.cfg "$WORK/grub.cfg"
-sed -i "s| noticetv.installer\$| noticetv.installer=test noticetv.test.ssid=$TEST_SSID noticetv.test.password=$TEST_PASSWORD noticetv.test.dashboard=$TEST_DASHBOARD console=tty0 console=ttyS0,115200|" "$WORK/grub.cfg"
-grep -q 'noticetv.installer=test' "$WORK/grub.cfg" || fail "could not switch the installer to test mode"
+sed -i "s| ndash.installer\$| ndash.installer=test ndash.test.ssid=$TEST_SSID ndash.test.password=$TEST_PASSWORD ndash.test.dashboard=$TEST_DASHBOARD console=tty0 console=ttyS0,115200|" "$WORK/grub.cfg"
+grep -q 'ndash.installer=test' "$WORK/grub.cfg" || fail "could not switch the installer to test mode"
 mcopy -o -i "$USB_ESP" "$WORK/grub.cfg" ::boot/grub/grub.cfg
 
 step "Install: the installer on a USB stick, a blank NVMe drive, Secure Boot on"
@@ -61,7 +61,7 @@ timeout "$INSTALL_TIMEOUT" $QEMU -serial file:"$OUT/install-serial.log" \
     -device qemu-xhci -drive id=usb,if=none,format=raw,file="$WORK/usb.img" \
     -device usb-storage,drive=usb,bootindex=0 \
     || fail "the installer did not power off within $INSTALL_TIMEOUT; see $OUT/install-serial.log"
-grep -q "NoticeTV is installed" "$OUT/install-serial.log" \
+grep -q "NdashOS is installed" "$OUT/install-serial.log" \
     || fail "the installer did not finish; see $OUT/install-serial.log"
 
 step "Boot the installed drive alone for ${BOOT_SECONDS}s"
@@ -103,8 +103,8 @@ debugfs -R "stat /root/.config/chromium" "$WORK/root.ext4" 2>/dev/null | grep -q
 installed() { debugfs -R "cat $1" "$WORK/root.ext4" 2>/dev/null; }
 installed /boot/dietpi.txt | grep -qx "SOFTWARE_CHROMIUM_AUTOSTART_URL=$TEST_DASHBOARD" \
     || fail "the kiosk was not set to the dashboard address"
-installed /etc/noticetv/noticetv.conf | grep -qx "DASHBOARD_URL='$TEST_DASHBOARD'" \
-    || fail "noticetv.conf did not get the dashboard address"
+installed /etc/ndash/ndash.conf | grep -qx "DASHBOARD_URL='$TEST_DASHBOARD'" \
+    || fail "ndash.conf did not get the dashboard address"
 HEX_SSID=$(printf '%s' "$TEST_SSID" | od -A n -t x1 | tr -d ' \n')
 installed /etc/wpa_supplicant/wpa_supplicant.conf | grep -q "ssid=$HEX_SSID" \
     || fail "wpa_supplicant.conf did not get the Wi-Fi network"
@@ -116,4 +116,4 @@ if { installed /etc/wpa_supplicant/wpa_supplicant.conf; installed /var/lib/dietp
     fail "the Wi-Fi password was stored as typed"
 fi
 rm -rf "$WORK"
-echo "the installer works: NoticeTV installed with its Wi-Fi and dashboard, grew into the drive and started its kiosk ($OUT/screen.ppm)"
+echo "the installer works: NdashOS installed with its Wi-Fi and dashboard, grew into the drive and started its kiosk ($OUT/screen.ppm)"

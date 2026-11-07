@@ -9,11 +9,11 @@ import { readSession, sessionCookie } from '../server/auth';
 import { DashboardStore, RevisionConflict } from '../server/store';
 import { HomeAssistantConnection } from '../server/home-assistant';
 
-const key = 'noticetv-unit-test-editor-fixture';
+const key = 'ndash-unit-test-editor-fixture';
 let directory: string;
 let server: Server | undefined;
 beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), 'noticetv-test-'));
+  directory = await mkdtemp(join(tmpdir(), 'ndash-test-'));
 });
 afterEach(async () => {
   vi.restoreAllMocks();

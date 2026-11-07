@@ -1,8 +1,8 @@
 #!/bin/sh
-# NoticeTV OS installer: turns a DietPi (x86_64) install into a NoticeTV.
+# NdashOS installer: turns a DietPi (x86_64) install into an NdashOS box.
 # Run as root on the box from a copy of this folder; scripts/install-over-ssh.sh does that from
 # another machine. Safe to run again: every step converges on the same state, and the summary
-# says when a reboot is needed. Settings: /etc/noticetv/noticetv.conf (see noticetv.conf.example).
+# says when a reboot is needed. Settings: /etc/ndash/ndash.conf (see ndash.conf.example).
 set -eu
 
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -11,9 +11,9 @@ STATUSBAR_CHANGED=no
 needs_reboot() { REBOOT_REASONS="$REBOOT_REASONS
   - $1"; }
 step() { echo "==> $*"; }
-# NOTICETV_PLATFORM=intel installs the Intel drivers and firmware regardless of this machine's CPU:
+# NDASH_PLATFORM=intel installs the Intel drivers and firmware regardless of this machine's CPU:
 # the image build runs in a VM on whatever CPU the build server has.
-is_intel() { [ "${NOTICETV_PLATFORM:-}" = intel ] || grep -q GenuineIntel /proc/cpuinfo; }
+is_intel() { [ "${NDASH_PLATFORM:-}" = intel ] || grep -q GenuineIntel /proc/cpuinfo; }
 dietpi_installed() { grep -q "^aSOFTWARE_INSTALL_STATE\[$1\]=2" /boot/dietpi/.installed; }
 
 # Set KEY=VALUE in /boot/dietpi.txt, escaping the characters sed would treat as special.
@@ -26,7 +26,7 @@ set_dietpi_txt() {
     fi
 }
 
-# Files from installs that predate this layer, replaced by the noticetv-* ones below.
+# Files from installs that predate this layer, replaced by the ndash-* ones below.
 remove_earlier_layout() {
     for unit in kiosk-statusbar.service kiosk-statusbar-raise.timer kiosk-statusbar-raise.service \
         kiosk-hidecursor.service kiosk-restart.timer kiosk-restart.service thermal-caps.service \
@@ -43,6 +43,32 @@ remove_earlier_layout() {
         /etc/systemd/system.conf.d/watchdog.conf /etc/systemd/journald.conf.d/persistent.conf
 }
 
+# Files from boxes installed as NoticeTV, the name before NdashOS, replaced by the ndash-* ones.
+# Their boot splash is removed in "Boot", once the new one is the default: an initramfs rebuilt
+# in between (a package update triggers one) still finds a splash.
+remove_noticetv_layout() {
+    for path in /etc/systemd/system/noticetv-*; do
+        [ -f "$path" ] || continue
+        systemctl disable --now --quiet "${path##*/}" 2>/dev/null || true
+        rm -f "$path"
+        NOTICETV_REPLACED=yes
+    done
+    if [ "${NOTICETV_REPLACED:-}" = yes ]; then
+        needs_reboot "NoticeTV's services are replaced by NdashOS's"
+    fi
+    rm -rf /usr/local/lib/noticetv /usr/share/noticetv /var/lib/noticetv
+    rm -f /etc/chromium.d/noticetv /etc/X11/xorg.conf.d/10-noticetv-noblank.conf \
+        /etc/apt/apt.conf.d/52noticetv-autoreboot /etc/modprobe.d/noticetv-rtw88.conf \
+        /etc/sysctl.d/98-noticetv-autoreboot.conf /etc/systemd/system.conf.d/noticetv-watchdog.conf \
+        /etc/systemd/journald.conf.d/noticetv-persistent.conf \
+        /etc/noticetv/statusbar.conky /etc/noticetv/statusbar.conky.new
+    rmdir /etc/noticetv 2>/dev/null || true
+    # The image's start page moved with the rest; a kiosk left on the old path would show an error.
+    if grep -qxF SOFTWARE_CHROMIUM_AUTOSTART_URL=file:///usr/share/noticetv/start/index.html /boot/dietpi.txt; then
+        set_dietpi_txt SOFTWARE_CHROMIUM_AUTOSTART_URL file:///usr/share/ndash/start/index.html
+    fi
+}
+
 # Width and height of a PNG, from its IHDR chunk.
 png_size() {
     od -A n -t u1 -j 16 -N 8 "$1" | awk '{print $1*16777216 + $2*65536 + $3*256 + $4, $5*16777216 + $6*65536 + $7*256 + $8}'
@@ -53,7 +79,7 @@ png_size() {
 write_statusbar_conf() {
     k=$(awk -v w="$DISPLAY_WIDTH" 'BEGIN{printf "%.4f", w/3840}')
     px() { awk -v n="$1" -v k="$k" 'BEGIN{printf "%d", n*k + 0.5}'; }
-    F=/usr/local/lib/noticetv/statusbar-field.sh
+    F=/usr/local/lib/ndash/statusbar-field.sh
     text=""
     x=0
     add() {  # add WIDTH_AT_4K CONTENT
@@ -63,9 +89,9 @@ write_statusbar_conf() {
         text="$text$2"
         x=$((x + $1))
     }
-    # The NoticeTV lockup, rendered for a 3840px panel and scaled with it. conky places images
+    # The NdashOS lockup, rendered for a 3840px panel and scaled with it. conky places images
     # from the corner of the text area; 6px down centres it on the text's capitals.
-    LOCKUP=/usr/share/noticetv/statusbar-lockup.png
+    LOCKUP=/usr/share/ndash/statusbar-lockup.png
     # shellcheck disable=SC2046  # png_size prints "width height"
     set -- $(png_size "$LOCKUP")
     add 205 "\${image $LOCKUP -p 0,$(px 6) -s $(px "$1")x$(px "$2")}"
@@ -73,7 +99,7 @@ write_statusbar_conf() {
     # them on the text: an icon font would shift conky's baseline at every font switch. conky
     # measures images from inside border_inner_margin but goto from the window's edge, hence -14.
     field() {  # field WIDTH_AT_4K ICON VALUE
-        add "$1" "\${image /usr/share/noticetv/icons/$2.png -p $(px $((x - 14))),$(px 7) -s $(px 26)x$(px 26)}\${goto $(px $((x + 40)))}$3"
+        add "$1" "\${image /usr/share/ndash/icons/$2.png -p $(px $((x - 14))),$(px 7) -s $(px 26)x$(px 26)}\${goto $(px $((x + 40)))}$3"
     }
     field 225 ip "\${color e8b04c}\${execi 30 $F ip}\${color}"
     if [ "$STATUSBAR_WAN_IP" = yes ]; then
@@ -88,8 +114,8 @@ write_statusbar_conf() {
     field 120 ram "\${memperc}%"
     field 165 disk "\${fs_free /}"
     field 160 uptime "\${uptime_short}"
-    cat > /etc/noticetv/statusbar.conky.new << EOF
--- Written by NoticeTV install.sh from /etc/noticetv/noticetv.conf; edits here are overwritten.
+    cat > /etc/ndash/statusbar.conky.new << EOF
+-- Written by NdashOS install.sh from /etc/ndash/ndash.conf; edits here are overwritten.
 conky.config = {
     own_window = true,
     own_window_type = 'override',
@@ -115,29 +141,34 @@ conky.config = {
 conky.text = [[$text]]
 EOF
     # conky doesn't reload its config by itself: note a change so the bar is restarted.
-    if cmp -s /etc/noticetv/statusbar.conky.new /etc/noticetv/statusbar.conky; then
-        rm /etc/noticetv/statusbar.conky.new
+    if cmp -s /etc/ndash/statusbar.conky.new /etc/ndash/statusbar.conky; then
+        rm /etc/ndash/statusbar.conky.new
     else
-        mv /etc/noticetv/statusbar.conky.new /etc/noticetv/statusbar.conky
+        mv /etc/ndash/statusbar.conky.new /etc/ndash/statusbar.conky
         STATUSBAR_CHANGED=yes
     fi
 }
 
 [ "$(id -u)" = 0 ] || { echo "install.sh: run as root" >&2; exit 1; }
 [ -f /boot/dietpi/.version ] || { echo "install.sh: this is not a DietPi system" >&2; exit 1; }
-[ "$(uname -m)" = x86_64 ] || { echo "install.sh: NoticeTV OS supports x86_64 boxes only" >&2; exit 1; }
+[ "$(uname -m)" = x86_64 ] || { echo "install.sh: NdashOS supports x86_64 boxes only" >&2; exit 1; }
 
 step "Settings"
-mkdir -p /etc/noticetv
-if [ ! -f /etc/noticetv/noticetv.conf ]; then
-    cp "$HERE/noticetv.conf.example" /etc/noticetv/noticetv.conf
-    echo "    created /etc/noticetv/noticetv.conf with the defaults"
+mkdir -p /etc/ndash
+if [ ! -f /etc/ndash/ndash.conf ] && [ -f /etc/noticetv/noticetv.conf ]; then
+    mv /etc/noticetv/noticetv.conf /etc/ndash/ndash.conf
+    echo "    moved /etc/noticetv/noticetv.conf to /etc/ndash/ndash.conf"
+fi
+if [ ! -f /etc/ndash/ndash.conf ]; then
+    cp "$HERE/ndash.conf.example" /etc/ndash/ndash.conf
+    echo "    created /etc/ndash/ndash.conf with the defaults"
 fi
 
 step "Files"
 remove_earlier_layout
+remove_noticetv_layout
 (cd "$HERE/rootfs" && tar -cf - .) | tar -C / -xf - --no-same-owner --no-overwrite-dir
-. /usr/local/lib/noticetv/lib.sh
+. /usr/local/lib/ndash/lib.sh
 
 step "Packages"
 PACKAGES="plymouth conky-std unclutter-xfixes xdotool scrot x11-xserver-utils chrony unattended-upgrades
@@ -168,8 +199,8 @@ set_dietpi_txt SOFTWARE_CHROMIUM_RES_Y "$RES_Y"
 if [ -n "$DASHBOARD_URL" ]; then
     set_dietpi_txt SOFTWARE_CHROMIUM_AUTOSTART_URL "$DASHBOARD_URL"
 fi
-cat > /etc/chromium.d/noticetv << EOF
-# Written by NoticeTV install.sh from /etc/noticetv/noticetv.conf; edits here are overwritten.
+cat > /etc/chromium.d/ndash << EOF
+# Written by NdashOS install.sh from /etc/ndash/ndash.conf; edits here are overwritten.
 export CHROMIUM_FLAGS="\$CHROMIUM_FLAGS --noerrdialogs --disable-infobars --disable-session-crashed-bubble --force-device-scale-factor=$DISPLAY_SCALE --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoDecoder,VaapiIgnoreDriverChecks"
 EOF
 write_statusbar_conf
@@ -186,15 +217,16 @@ fi
 if is_intel && ! grep -qx i915 /etc/initramfs-tools/modules; then
     echo i915 >> /etc/initramfs-tools/modules
 fi
-if [ "$(plymouth-set-default-theme)" != noticetv ]; then
-    plymouth-set-default-theme noticetv
+if [ "$(plymouth-set-default-theme)" != ndash ]; then
+    plymouth-set-default-theme ndash
 fi
+rm -rf /usr/share/plymouth/themes/noticetv
 # The initramfs carries the splash theme and the module list: rebuild it when either changed.
-SUM=$(cat /usr/share/plymouth/themes/noticetv/* /etc/initramfs-tools/modules /etc/modprobe.d/noticetv-* | md5sum)
-mkdir -p /var/lib/noticetv
-if [ "$SUM" != "$(cat /var/lib/noticetv/initramfs.sum 2>/dev/null)" ]; then
+SUM=$(cat /usr/share/plymouth/themes/ndash/* /etc/initramfs-tools/modules /etc/modprobe.d/ndash-* | md5sum)
+mkdir -p /var/lib/ndash
+if [ "$SUM" != "$(cat /var/lib/ndash/initramfs.sum 2>/dev/null)" ]; then
     update-initramfs -u
-    echo "$SUM" > /var/lib/noticetv/initramfs.sum
+    echo "$SUM" > /var/lib/ndash/initramfs.sum
     needs_reboot "the boot splash or early drivers changed"
 fi
 
@@ -210,35 +242,35 @@ systemctl disable --quiet systemd-networkd-wait-online.service 2>/dev/null || tr
 # DietPi masks the apt timers; unattended security updates need them.
 systemctl unmask --quiet apt-daily.timer apt-daily-upgrade.timer apt-daily.service apt-daily-upgrade.service
 systemctl enable --quiet apt-daily.timer apt-daily-upgrade.timer
-# DietPi's Wi-Fi monitor tears the connection down on a single lost ping; noticetv-wifi-watch
+# DietPi's Wi-Fi monitor tears the connection down on a single lost ping; ndash-wifi-watch
 # reconnects only after a real outage. DietPi's is disabled but left running until the reboot:
 # a DHCP client its reconnects started lives in its service, and stopping it now would take the
 # network down mid-install.
 if systemctl is-enabled --quiet dietpi-wifi-monitor.service 2>/dev/null; then
     systemctl disable --quiet dietpi-wifi-monitor.service
-    needs_reboot "Wi-Fi monitoring switches to NoticeTV's"
+    needs_reboot "Wi-Fi monitoring switches to NdashOS's"
 fi
-systemctl enable --quiet noticetv-wifi-watch.service
+systemctl enable --quiet ndash-wifi-watch.service
 if ! systemctl is-active --quiet dietpi-wifi-monitor.service; then
-    systemctl restart noticetv-wifi-watch.service  # picks up a changed script
+    systemctl restart ndash-wifi-watch.service  # picks up a changed script
 fi
-systemctl enable --quiet noticetv-power.service noticetv-hidecursor.service noticetv-kiosk-watch.service
-systemctl restart noticetv-kiosk-watch.service  # picks up a changed script
-systemctl enable --now --quiet noticetv-health.timer noticetv-kiosk-restart.timer noticetv-splash-timeout.timer
+systemctl enable --quiet ndash-power.service ndash-hidecursor.service ndash-kiosk-watch.service
+systemctl restart ndash-kiosk-watch.service  # picks up a changed script
+systemctl enable --now --quiet ndash-health.timer ndash-kiosk-restart.timer ndash-splash-timeout.timer
 if [ "$STATUSBAR" = yes ]; then
-    systemctl enable --quiet noticetv-statusbar.service
-    systemctl enable --now --quiet noticetv-statusbar-raise.timer
-    if [ "$STATUSBAR_CHANGED" = yes ] && systemctl is-active --quiet noticetv-statusbar.service; then
-        systemctl restart noticetv-statusbar.service
+    systemctl enable --quiet ndash-statusbar.service
+    systemctl enable --now --quiet ndash-statusbar-raise.timer
+    if [ "$STATUSBAR_CHANGED" = yes ] && systemctl is-active --quiet ndash-statusbar.service; then
+        systemctl restart ndash-statusbar.service
     fi
 else
-    systemctl disable --now --quiet noticetv-statusbar.service noticetv-statusbar-raise.timer
+    systemctl disable --now --quiet ndash-statusbar.service ndash-statusbar-raise.timer
 fi
 
 echo
 if [ -n "$REBOOT_REASONS" ]; then
-    echo "NoticeTV OS installed. Reboot to finish:$REBOOT_REASONS"
+    echo "NdashOS installed. Reboot to finish:$REBOOT_REASONS"
 else
-    echo "NoticeTV OS is up to date. Kiosk changes apply at the next kiosk restart:"
+    echo "NdashOS is up to date. Kiosk changes apply at the next kiosk restart:"
     echo "  systemctl restart getty@tty1"
 fi

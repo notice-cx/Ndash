@@ -40,7 +40,7 @@ export function Login({
         </h1>
         <p>
           {display
-            ? 'Connect this screen to your NoticeTV dashboard.'
+            ? 'Connect this screen to your Ndash dashboard.'
             : 'The day ahead. The weather outside. A window to somewhere. Make a home for what matters.'}
         </p>
         <AccessForm display={display} onConnect={onConnect} initialError={initialError} />

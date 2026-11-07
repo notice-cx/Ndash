@@ -8,7 +8,7 @@ import {
   startHomeAssistantFixture,
 } from '../fixtures/home-assistant';
 
-const fixtureKey = 'noticetv-browser-test-fixture-only';
+const fixtureKey = 'ndash-browser-test-fixture-only';
 
 test('Home Assistant connects once and supplies live, scoped readings to a published screen', async ({
   page,
@@ -43,7 +43,7 @@ test('Home Assistant connects once and supplies live, scoped readings to a publi
       })),
     ).toEqual([]);
     await page.screenshot({
-      path: 'test-results/noticetv-home-assistant-desktop.png',
+      path: 'test-results/ndash-home-assistant-desktop.png',
       fullPage: true,
     });
     await page.setViewportSize({ width: 390, height: 844 });
@@ -51,7 +51,7 @@ test('Home Assistant connects once and supplies live, scoped readings to a publi
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
     await page.screenshot({
-      path: 'test-results/noticetv-home-assistant-phone.png',
+      path: 'test-results/ndash-home-assistant-phone.png',
       fullPage: true,
     });
     await page.setViewportSize({ width: 1440, height: 1000 });
@@ -74,7 +74,7 @@ test('Home Assistant connects once and supplies live, scoped readings to a publi
       })),
     ).toEqual([]);
     await page.screenshot({
-      path: 'test-results/noticetv-home-assistant-widget.png',
+      path: 'test-results/ndash-home-assistant-widget.png',
       fullPage: true,
     });
     fixture.update(selected, '23.2');
@@ -111,7 +111,7 @@ test('Home Assistant connects once and supplies live, scoped readings to a publi
     fixture.dropConnections();
     await expect(displayed.locator('.entity-value')).toContainText('24.1', { timeout: 15_000 });
     await expect(displayed).not.toContainText('Last known reading');
-    await screen.screenshot({ path: 'test-results/noticetv-home-assistant-display.png' });
+    await screen.screenshot({ path: 'test-results/ndash-home-assistant-display.png' });
     await page.reload();
     await expect(
       page.getByRole('button', { name: 'Edit Room temperature', exact: true }),
@@ -178,7 +178,7 @@ test('themes preview immediately with readable widgets and a neutral editor', as
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
-  await page.screenshot({ path: 'test-results/noticetv-themes-phone.png', fullPage: true });
+  await page.screenshot({ path: 'test-results/ndash-themes-phone.png', fullPage: true });
 });
 
 test('editor and widget collection meet automated accessibility checks', async ({ page }) => {
@@ -262,18 +262,18 @@ test('demo renders at desktop and phone sizes, with an accessible widget collect
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/demo');
   await expect(page.getByRole('heading', { name: 'Home, in the here & now.' })).toBeVisible();
-  await page.screenshot({ path: 'test-results/noticetv-editor-desktop.png', fullPage: true });
+  await page.screenshot({ path: 'test-results/ndash-editor-desktop.png', fullPage: true });
   await page.getByRole('button', { name: 'Add widget', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Live stream', exact: true })).toBeVisible();
-  await page.screenshot({ path: 'test-results/noticetv-widget-collection.png' });
+  await page.screenshot({ path: 'test-results/ndash-widget-collection.png' });
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('button', { name: 'Add widget', exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
-  await page.screenshot({ path: 'test-results/noticetv-editor-phone.png', fullPage: true });
+  await page.screenshot({ path: 'test-results/ndash-editor-phone.png', fullPage: true });
   expect(errors).toEqual([]);
 });
 
@@ -324,7 +324,7 @@ test('a draft stays off the display until published and a paired screen cannot e
     data: {},
   });
   expect(forbidden.status()).toBe(403);
-  await screen.screenshot({ path: 'test-results/noticetv-paired-display.png' });
+  await screen.screenshot({ path: 'test-results/ndash-paired-display.png' });
   await page.reload();
   await expect(hideCursor).toBeChecked();
   await expect(page.getByRole('radio', { name: 'Paper', exact: true })).toBeChecked();
@@ -414,5 +414,5 @@ test('HLS plays a local fixture and recovers after a media error', async ({ page
       timeout: 15_000,
     })
     .toBeGreaterThan(0.2);
-  await page.screenshot({ path: 'test-results/noticetv-hls-playback.png' });
+  await page.screenshot({ path: 'test-results/ndash-hls-playback.png' });
 });

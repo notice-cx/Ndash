@@ -10,8 +10,8 @@ import { chromium, expect } from '@playwright/test';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const images = resolve(root, '../docs/images');
-const directory = await mkdtemp(resolve(tmpdir(), 'noticetv-docs-'));
-const port = Number(process.env.NOTICETV_DOCS_PORT || 3002);
+const directory = await mkdtemp(resolve(tmpdir(), 'ndash-docs-'));
+const port = Number(process.env.NDASH_DOCS_PORT || 3002);
 assert(Number.isInteger(port) && port > 0 && port < 65536, 'Choose a valid documentation port.');
 const origin = `http://127.0.0.1:${port}`;
 const key = randomBytes(32).toString('base64url');
@@ -22,11 +22,11 @@ const server = spawn(process.execPath, ['build/server/index.js'], {
     ...process.env,
     NODE_ENV: 'production',
     PORT: String(port),
-    NOTICETV_HOST: '127.0.0.1',
-    NOTICETV_ORIGIN: origin,
-    NOTICETV_DATA_DIR: directory,
-    NOTICETV_EDITOR_KEY: key,
-    NOTICETV_SECURE_COOKIES: '0',
+    NDASH_HOST: '127.0.0.1',
+    NDASH_ORIGIN: origin,
+    NDASH_DATA_DIR: directory,
+    NDASH_EDITOR_KEY: key,
+    NDASH_SECURE_COOKIES: '0',
   },
   stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -41,7 +41,7 @@ try {
     );
     server.stdout.on('data', (chunk) => {
       output += chunk;
-      if (output.includes('NoticeTV is ready')) {
+      if (output.includes('Ndash is ready')) {
         clearTimeout(timeout);
         ready();
       }
@@ -81,7 +81,7 @@ try {
   await page.evaluate(() => document.fonts.ready);
   const shot = async (locator, name) =>
     locator.screenshot({ path: resolve(images, name), animations: 'disabled', scale: 'css' });
-  await shot(page, 'noticetv-editor.png');
+  await shot(page, 'ndash-editor.png');
   for (const [id, name] of [
     ['graphite', 'Graphite'],
     ['midnight', 'Midnight'],
@@ -91,19 +91,19 @@ try {
   ]) {
     await page.getByRole('radio', { name, exact: true }).check();
     await expect(page.locator('.dashboard')).toHaveAttribute('data-theme', id);
-    await shot(page.locator('.canvas-frame'), `noticetv-theme-${id}.png`);
+    await shot(page.locator('.canvas-frame'), `ndash-theme-${id}.png`);
   }
   await page.getByRole('radio', { name: 'Graphite', exact: true }).check();
   await page.getByRole('button', { name: 'Add widget', exact: true }).click();
-  await shot(page.getByRole('dialog'), 'noticetv-widgets.png');
+  await shot(page.getByRole('dialog'), 'ndash-widgets.png');
   await page.getByRole('button', { name: 'Close dialog' }).click();
   await page.setViewportSize({ width: 1920, height: 1200 });
   await page.getByRole('button', { name: 'Preview', exact: true }).click();
-  await shot(page.getByRole('dialog').locator('.dashboard'), 'noticetv-dashboard.png');
+  await shot(page.getByRole('dialog').locator('.dashboard'), 'ndash-dashboard.png');
   await page.getByRole('button', { name: 'Close dialog' }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
-    path: resolve(images, 'noticetv-editor-phone.png'),
+    path: resolve(images, 'ndash-editor-phone.png'),
     fullPage: true,
     animations: 'disabled',
     scale: 'css',
@@ -121,7 +121,7 @@ try {
     .getByRole('button', { name: 'Connect a screen', exact: true })
     .click();
   await expect(page.getByLabel('Pairing code')).toContainText(/\d{6}/);
-  await shot(page.getByRole('dialog'), 'noticetv-pairing.png');
+  await shot(page.getByRole('dialog'), 'ndash-pairing.png');
   await page.getByRole('button', { name: 'Close dialog' }).click();
   // HA screenshots use explicit local response fixtures; this server never has HA credentials.
   const entity = {
@@ -172,13 +172,13 @@ try {
   await page.getByLabel('Widget title').fill('Room temperature');
   await page.getByRole('combobox', { name: 'Height', exact: true }).selectOption('2');
   await expect(page.locator('.entity-value')).toContainText('21.5');
-  await shot(page, 'noticetv-home-assistant-widget.png');
+  await shot(page, 'ndash-home-assistant-widget.png');
   await page.getByRole('button', { name: 'Data sources', exact: true }).click();
   await expect(page.locator('.ha-connection-status')).toContainText('Connected');
-  await shot(page, 'noticetv-home-assistant.png');
+  await shot(page, 'ndash-home-assistant.png');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
-    path: resolve(images, 'noticetv-home-assistant-phone.png'),
+    path: resolve(images, 'ndash-home-assistant-phone.png'),
     fullPage: true,
     animations: 'disabled',
     scale: 'css',
@@ -190,19 +190,19 @@ try {
   await home.goto(`${origin}/demo?home`);
   await expect(home.getByRole('heading', { name: 'Home, connected.', exact: true })).toBeVisible();
   await home.evaluate(() => document.fonts.ready);
-  await shot(home, 'noticetv-home-widgets-editor.png');
+  await shot(home, 'ndash-home-widgets-editor.png');
   await home.setViewportSize({ width: 1920, height: 1200 });
   await home.getByRole('button', { name: 'Preview', exact: true }).click();
-  await shot(home.getByRole('dialog').locator('.dashboard'), 'noticetv-home-widgets.png');
+  await shot(home.getByRole('dialog').locator('.dashboard'), 'ndash-home-widgets.png');
   await home.getByRole('dialog').getByRole('button', { name: 'month', exact: true }).click();
-  await shot(home.getByRole('dialog').locator('.dashboard'), 'noticetv-home-widgets-month.png');
+  await shot(home.getByRole('dialog').locator('.dashboard'), 'ndash-home-widgets-month.png');
   await home.getByRole('button', { name: 'Close dialog', exact: true }).click();
   await home.goto(`${origin}/demo?home&cameras`);
   await home.getByRole('button', { name: 'Preview', exact: true }).click();
   await expect(
     home.getByRole('dialog').getByAltText('Illustrated front-door preview'),
   ).toBeVisible();
-  await shot(home.getByRole('dialog').locator('.dashboard'), 'noticetv-home-widgets-camera.png');
+  await shot(home.getByRole('dialog').locator('.dashboard'), 'ndash-home-widgets-camera.png');
   assert.deepEqual(errors, [], 'Captures must not contain application errors.');
   assert.deepEqual(blocked, [], 'Documentation captures must not request external services.');
   console.log(`Captured seventeen documentation screenshots in docs/images using fictional data.`);

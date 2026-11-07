@@ -29,7 +29,7 @@ const sample = <T extends RichWidgetType>(type: T): WidgetOf<T> =>
   )! as WidgetOf<T>;
 
 beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), 'noticetv-rich-test-'));
+  directory = await mkdtemp(join(tmpdir(), 'ndash-rich-test-'));
   fixture = await startHomeAssistantFixture({ rich: true });
   now = new Date('2026-11-01T09:30:00Z');
   fixture.controls.now = now;
@@ -286,7 +286,7 @@ describe('published widget permission checks', () => {
     expect(photo.status).toBe(200);
     expect(photo.headers.get('content-type')).toBe('image/png');
     expect(photo.headers.get('cache-control')).toBe('no-store');
-    expect(photo.headers.get('x-noticetv-captured-at')).toBeTruthy();
+    expect(photo.headers.get('x-ndash-captured-at')).toBeTruthy();
     expect((await photo.arrayBuffer()).byteLength).toBeGreaterThan(50);
     expect(fixture.requests.some((request) => request.path.includes('camera.private'))).toBe(false);
     const replacement = { ...camera, entityId: 'camera.private' };

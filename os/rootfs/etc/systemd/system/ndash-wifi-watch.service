@@ -1,0 +1,13 @@
+[Unit]
+Description=NdashOS: reconnect Wi-Fi after a real outage, not a single lost ping
+After=network.target
+
+[Service]
+ExecStart=/usr/local/lib/ndash/wifi-watch.sh
+# on-failure: the script exits cleanly on a box without Wi-Fi, and must stay stopped there.
+Restart=on-failure
+RestartSec=30
+SyslogIdentifier=ndash-wifi-watch
+
+[Install]
+WantedBy=multi-user.target

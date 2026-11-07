@@ -1,5 +1,5 @@
 #!/bin/sh
-# Render the NoticeTV lockup into the images the box shows, and a preview of the boot screen.
+# Render the NdashOS lockup into the images the box shows, and a preview of the boot screen.
 #   brand/render.sh
 # Needs a headless-capable Chromium (set CHROME to its binary if it isn't on PATH as chromium or
 # google-chrome) and ImageMagick 7 (magick).
@@ -17,7 +17,7 @@ trap 'rm -rf "$TMP"' EXIT
 
 FONT=$(base64 < fonts/StackSansNotch-Variable.woff2 | tr -d '\n')
 page() {  # page SIZE BACKGROUND FILE
-    sed -e "s|@FONT@|$FONT|" -e "s|@SUFFIX@|TV|" -e "s|@SIZE@|$1|" -e "s|@BACKGROUND@|$2|" lockup.html > "$3"
+    sed -e "s|@FONT@|$FONT|" -e "s|@SUFFIX@|OS|" -e "s|@SIZE@|$1|" -e "s|@BACKGROUND@|$2|" lockup.html > "$3"
 }
 shot() {  # shot HTML PNG [extra chrome flags]
     html=$1 png=$2
@@ -29,12 +29,12 @@ shot() {  # shot HTML PNG [extra chrome flags]
 page 200 transparent "$TMP/splash.html"
 shot "$TMP/splash.html" "$TMP/splash.png" --default-background-color=00000000
 magick "$TMP/splash.png" -trim +repage -bordercolor none -border 8 -strip \
-    "$ROOTFS/usr/share/plymouth/themes/noticetv/noticetv.png"
+    "$ROOTFS/usr/share/plymouth/themes/ndash/ndash.png"
 
-mkdir -p "$ROOTFS/usr/share/noticetv"
+mkdir -p "$ROOTFS/usr/share/ndash"
 page 27 "#000000" "$TMP/statusbar.html"
 shot "$TMP/statusbar.html" "$TMP/statusbar.png"
-magick "$TMP/statusbar.png" -trim +repage -strip "$ROOTFS/usr/share/noticetv/statusbar-lockup.png"
+magick "$TMP/statusbar.png" -trim +repage -strip "$ROOTFS/usr/share/ndash/statusbar-lockup.png"
 
 # Status bar icons: Lucide (brand/icons, ISC), the icon set NoticeOS uses, in the brand's muted
 # ink on the bar's black, each a 26px square for a 3840px panel. Drawn side by side on one page,
@@ -50,11 +50,11 @@ ICONS="ip:network wan:globe wifi:wifi temp:thermometer watts:zap load:cpu ram:me
     echo "</body></html>"
 } > "$TMP/icons.html"
 shot "$TMP/icons.html" "$TMP/icons.png"
-mkdir -p "$ROOTFS/usr/share/noticetv/icons"
+mkdir -p "$ROOTFS/usr/share/ndash/icons"
 i=0
 for pair in $ICONS; do
     magick "$TMP/icons.png" -crop "${ICON_PX}x${ICON_PX}+$((i * ICON_PX))+0" +repage -strip \
-        "$ROOTFS/usr/share/noticetv/icons/${pair%%:*}.png"
+        "$ROOTFS/usr/share/ndash/icons/${pair%%:*}.png"
     i=$((i + 1))
 done
 

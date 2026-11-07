@@ -8,7 +8,7 @@ The health log has one line per minute: processor and board temperature, package
 speed, load, free memory, IP address and Wi-Fi signal.
 
 ```sh
-journalctl -t noticetv-health --since "-2h"
+journalctl -t ndash-health --since "-2h"
 ```
 
 ## Why did it reboot, or what happened before it froze?
@@ -18,7 +18,7 @@ Logs survive reboots. List the boots, then read the end of the previous one:
 ```sh
 journalctl --list-boots
 journalctl -b -1 -e
-journalctl -b -1 -t noticetv-health | tail   # its last minutes
+journalctl -b -1 -t ndash-health | tail   # its last minutes
 ```
 
 A boot that ends mid-sentence, with no shutdown messages, ended in a freeze or a power cut. With
@@ -26,11 +26,11 @@ the watchdog armed (`wdctl` shows the timeout), a freeze reboots the box within 
 
 ## Is the Wi-Fi dropping?
 
-`noticetv-wifi-watch` pings the router every 30 seconds and reconnects only after about 90
+`ndash-wifi-watch` pings the router every 30 seconds and reconnects only after about 90
 seconds without an answer. It logs every reconnect, and every shorter gap it rode out:
 
 ```sh
-journalctl -t noticetv-wifi-watch
+journalctl -t ndash-wifi-watch
 ```
 
 Many short gaps point at a weak signal: move the box or the access point, or use Ethernet.
@@ -45,23 +45,23 @@ Then from your computer: `ssh root@<the box> cat /tmp/screen.png > screen.png`.
 
 ## The screen shows text instead of the dashboard
 
-That is the console Chromium leaves behind when it quits or crashes. `noticetv-kiosk-watch` notices
+That is the console Chromium leaves behind when it quits or crashes. `ndash-kiosk-watch` notices
 within about a minute and restarts the kiosk; its log says when it did:
 
 ```sh
-journalctl -t noticetv-kiosk-watch
+journalctl -t ndash-kiosk-watch
 ```
 
 ## The screen is blank: white, or one plain colour
 
 That is usually a dashboard whose app failed to load, for example because its server was restarting
 when the page loaded: the browser counts the page as loaded, so nothing retries it.
-`noticetv-kiosk-watch` reloads a page that has been blank for 2 minutes, then again after 4, 8, 16
+`ndash-kiosk-watch` reloads a page that has been blank for 2 minutes, then again after 4, 8, 16
 and every 30 minutes while it stays blank. The same log says when it did, and when the page came
 back:
 
 ```sh
-journalctl -t noticetv-kiosk-watch
+journalctl -t ndash-kiosk-watch
 ```
 
 ## The kiosk is stuck or shows an old page
@@ -74,11 +74,11 @@ systemctl restart getty@tty1
 
 ## Seeing the boot messages behind the splash
 
-Press **Esc** on a keyboard plugged into the box while the NoticeTV logo is up. If the kiosk never
+Press **Esc** on a keyboard plugged into the box while the NdashOS logo is up. If the kiosk never
 starts, the splash steps aside by itself after 2 minutes and leaves the text console on screen.
 
 ## The status bar is missing
 
 It starts a few seconds after Chromium and is raised above it every 30 seconds, so give it a
-minute after a boot or kiosk restart. Otherwise: `systemctl status noticetv-statusbar`, and check
-`STATUSBAR=yes` in `/etc/noticetv/noticetv.conf`.
+minute after a boot or kiosk restart. Otherwise: `systemctl status ndash-statusbar`, and check
+`STATUSBAR=yes` in `/etc/ndash/ndash.conf`.

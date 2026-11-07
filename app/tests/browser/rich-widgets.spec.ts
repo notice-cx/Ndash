@@ -119,7 +119,7 @@ test('rich widgets use configured HA sources and publish data and snapshots to a
   const origin = 'http://localhost:3001';
   try {
     await page.goto('/');
-    await page.getByLabel('Editor key', { exact: true }).fill('noticetv-browser-test-fixture-only');
+    await page.getByLabel('Editor key', { exact: true }).fill('ndash-browser-test-fixture-only');
     await page.getByRole('button', { name: 'Open your editor', exact: true }).click();
     await expect(page.locator('.dashboard')).toBeVisible();
     await page.request.delete('/api/home-assistant', { headers: { Origin: origin }, data: {} });

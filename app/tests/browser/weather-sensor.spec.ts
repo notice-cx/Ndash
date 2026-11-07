@@ -46,7 +46,7 @@ test('weather uses a selected HA temperature while keeping its forecast and publ
   const headers = { Origin: origin };
   try {
     await page.goto('/');
-    await page.getByLabel('Editor key', { exact: true }).fill('noticetv-browser-test-fixture-only');
+    await page.getByLabel('Editor key', { exact: true }).fill('ndash-browser-test-fixture-only');
     await page.getByRole('button', { name: 'Open your editor', exact: true }).click();
     await expect(page.locator('.dashboard')).toBeVisible();
     expect(
@@ -100,13 +100,13 @@ test('weather uses a selected HA temperature while keeping its forecast and publ
     expect(
       axe.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(({ target }) => target) })),
     ).toEqual([]);
-    await page.screenshot({ path: 'test-results/noticetv-weather-sensor.png', fullPage: true });
+    await page.screenshot({ path: 'test-results/ndash-weather-sensor.png', fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
     await page.screenshot({
-      path: 'test-results/noticetv-weather-sensor-phone.png',
+      path: 'test-results/ndash-weather-sensor-phone.png',
       fullPage: true,
     });
     await page.setViewportSize({ width: 1440, height: 1000 });
@@ -234,7 +234,7 @@ test('Home weather saves a searched second location and keeps its local forecast
   await routes(viewer);
   try {
     await page.goto('/');
-    await page.getByLabel('Editor key', { exact: true }).fill('noticetv-browser-test-fixture-only');
+    await page.getByLabel('Editor key', { exact: true }).fill('ndash-browser-test-fixture-only');
     await page.getByRole('button', { name: 'Open your editor', exact: true }).click();
     await expect(page.locator('.dashboard')).toBeVisible();
     expect(
@@ -279,13 +279,13 @@ test('Home weather saves a searched second location and keeps its local forecast
     expect(
       axe.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(({ target }) => target) })),
     ).toEqual([]);
-    await page.screenshot({ path: 'test-results/noticetv-second-location.png', fullPage: true });
+    await page.screenshot({ path: 'test-results/ndash-second-location.png', fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     expect(
       await page.evaluate(() => window.document.documentElement.scrollWidth <= innerWidth),
     ).toBe(true);
     await page.screenshot({
-      path: 'test-results/noticetv-second-location-phone.png',
+      path: 'test-results/ndash-second-location-phone.png',
       fullPage: true,
     });
     await page.setViewportSize({ width: 1440, height: 1000 });

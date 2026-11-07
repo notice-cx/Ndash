@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=NdashOS
+Description=NdashOS boot splash: the NdashOS lockup on the brand canvas
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/ndash
+ScriptFile=/usr/share/plymouth/themes/ndash/ndash.script

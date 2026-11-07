@@ -1,9 +1,9 @@
 #!/bin/sh
-# NoticeTV OS image build, inside the build VM, on the boot after DietPi's first run: check the
+# NdashOS image build, inside the build VM, on the boot after DietPi's first run: check the
 # kiosk came up, leave the logs and a screenshot on the EFI partition for image/build.sh, remove
 # everything specific to this VM, re-arm DietPi's root partition expansion for the real disk,
 # and power off.
-OUT=/boot/efi/noticetv-bake
+OUT=/boot/efi/ndash-bake
 mkdir -p "$OUT/logs"
 
 finish() {  # finish RESULT
@@ -20,11 +20,11 @@ finish() {  # finish RESULT
 
 clean_up() {
     # The build's serial console off the kernel command line (image/build.sh added it).
-    rm -f /etc/default/grub.d/noticetv-bake.cfg
+    rm -f /etc/default/grub.d/ndash-bake.cfg
     update-grub
     # The kiosk off first, so Chromium can't write its profile back; its watch first, or it would
     # start the kiosk again.
-    systemctl stop noticetv-kiosk-watch.service getty@tty1.service
+    systemctl stop ndash-kiosk-watch.service getty@tty1.service
     rm -rf /root/.config/chromium /root/.cache /root/.bash_history /root/.Xauthority
     apt-get clean
     rm -rf /var/lib/apt/lists/*
@@ -43,15 +43,15 @@ clean_up() {
     ln -sf /etc/systemd/system/dietpi-fs_partition_resize.service \
         /etc/systemd/system/local-fs.target.wants/dietpi-fs_partition_resize.service
 
-    systemctl disable noticetv-bake-finalize.service
-    rm -f /etc/systemd/system/noticetv-bake-finalize.service /usr/local/lib/noticetv/bake-finalize.sh
+    systemctl disable ndash-bake-finalize.service
+    rm -f /etc/systemd/system/ndash-bake-finalize.service /usr/local/lib/ndash/bake-finalize.sh
 
     # Discarded blocks make the image file sparse, so it compresses to its real content.
     fstrim -v /
 }
 
 [ "$(cat /boot/dietpi/.install_stage 2>/dev/null)" = 2 ] || finish "failed: DietPi's first run did not complete"
-[ -f /var/lib/noticetv/initramfs.sum ] || finish "failed: install.sh did not complete"
+[ -f /var/lib/ndash/initramfs.sum ] || finish "failed: install.sh did not complete"
 
 n=0
 until pgrep -x chromium >/dev/null || [ $n -ge 180 ]; do

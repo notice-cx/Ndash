@@ -76,8 +76,8 @@ export function CameraSnapshot({
           setSnapshot({
             key,
             url,
-            time: response.headers.get('X-NoticeTV-Captured-At') || new Date().toISOString(),
-            stale: response.headers.get('X-NoticeTV-Stale') === '1',
+            time: response.headers.get('X-Ndash-Captured-At') || new Date().toISOString(),
+            stale: response.headers.get('X-Ndash-Stale') === '1',
           });
           setError('');
           if (old) URL.revokeObjectURL(old);

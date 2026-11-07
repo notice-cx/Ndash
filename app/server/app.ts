@@ -40,7 +40,7 @@ export function createApp({
   app.disable('x-powered-by');
   app.use((request, response, next) => {
     if (request.get('host') !== expected.host) {
-      response.status(421).json({ error: 'Use the configured NoticeTV address.' });
+      response.status(421).json({ error: 'Use the configured Ndash address.' });
       return;
     }
     response.set({
@@ -52,7 +52,7 @@ export function createApp({
     if (request.path.startsWith('/api/')) response.set('Cache-Control', 'no-store');
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
       if (request.get('origin') !== expected.origin) {
-        response.status(403).json({ error: 'Open the editor at the configured NoticeTV address.' });
+        response.status(403).json({ error: 'Open the editor at the configured Ndash address.' });
         return;
       }
       if (!request.is('application/json')) {
@@ -70,7 +70,7 @@ export function createApp({
       const session = readSessionDetails(request.headers.cookie, editorKey);
       const role = session?.role;
       if (!role) {
-        response.status(401).json({ error: 'Connect to NoticeTV to continue.' });
+        response.status(401).json({ error: 'Connect to Ndash to continue.' });
         return;
       }
       if (editorOnly && role !== 'editor') {
@@ -225,8 +225,8 @@ export function createApp({
           response
             .set({
               'Content-Type': image.type,
-              'X-NoticeTV-Captured-At': image.capturedAt,
-              'X-NoticeTV-Stale': image.stale ? '1' : '0',
+              'X-Ndash-Captured-At': image.capturedAt,
+              'X-Ndash-Stale': image.stale ? '1' : '0',
             })
             .send(image.body);
         } else if (isRichWidget(widget))
@@ -256,8 +256,8 @@ export function createApp({
           response
             .set({
               'Content-Type': image.type,
-              'X-NoticeTV-Captured-At': image.capturedAt,
-              'X-NoticeTV-Stale': image.stale ? '1' : '0',
+              'X-Ndash-Captured-At': image.capturedAt,
+              'X-Ndash-Stale': image.stale ? '1' : '0',
             })
             .send(image.body);
         } else response.json(await haWidgets.data(widget, board.timeZone, board.units));
@@ -300,7 +300,7 @@ export function createApp({
   app.put('/api/draft', authorized(true), save(false));
   app.post('/api/publish', authorized(true), save(true));
   app.use('/api', (_request, response) => {
-    response.status(404).json({ error: 'This NoticeTV endpoint does not exist.' });
+    response.status(404).json({ error: 'This Ndash endpoint does not exist.' });
   });
   app.use(
     (
@@ -316,7 +316,7 @@ export function createApp({
             ? 'This dashboard is too large.'
             : status === 400
               ? 'The request contains invalid JSON.'
-              : 'NoticeTV could not save this change. Your published dashboard is still available.',
+              : 'Ndash could not save this change. Your published dashboard is still available.',
       });
     },
   );

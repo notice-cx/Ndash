@@ -1,0 +1,20 @@
+#!/bin/sh
+# The installer's tools, beyond what initramfs-tools and busybox bring.
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case "$1" in
+prereqs)
+    prereqs
+    exit 0
+    ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+copy_exec /usr/sbin/blkid /sbin        # finds the USB stick by its label (busybox's can't)
+# Multi-threaded decompression, with progress. Its own path: busybox's xz applet takes /bin/xz.
+copy_exec /usr/bin/xz /usr/lib/ndash/xz
+copy_exec /usr/sbin/wipefs /sbin       # clears old partition tables at both ends of the drive
+copy_exec /usr/bin/efibootmgr /bin     # puts NdashOS first in the boot order
+# The Wi-Fi key as its 64-digit hash, so the password itself is never stored.
+copy_exec /usr/bin/wpa_passphrase /usr/lib/ndash/wpa_passphrase

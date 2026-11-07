@@ -1,4 +1,4 @@
-# NoticeTV
+# Ndash
 
 **A little more in view.**
 
@@ -6,18 +6,18 @@ A self-hosted dashboard for the screen in your room. Bring together the weather,
 live video, and the things worth looking up for. Configure it from your phone or laptop,
 then publish it to your TV.
 
-[![The NoticeTV display in Graphite, showing weather, an agenda, an illustrated stream, a note, and a countdown.](docs/images/noticetv-dashboard.png)](docs/images/noticetv-dashboard.png)
+[![The Ndash display in Graphite, showing weather, an agenda, an illustrated stream, a note, and a countdown.](docs/images/ndash-dashboard.png)](docs/images/ndash-dashboard.png)
 
 _Screenshots use fictional demo data. The stream tile is an illustration; configured HLS streams play video._
 
-[Try it locally](#try-it-locally) · [Hosting guide](app/README.md) · [Install NoticeTV OS](docs/operating-system.md) · [Contribute](CONTRIBUTING.md)
+[Try it locally](#try-it-locally) · [Hosting guide](app/README.md) · [Install NdashOS](docs/operating-system.md) · [Contribute](CONTRIBUTING.md)
 
 ## Make it your own
 
 Choose widgets, connect their sources, and arrange the view. Change sizes, reorder widgets,
 and preview the whole screen before publishing. Export a layout to keep it or share it with a friend.
 
-[![The browser editor with a live dashboard canvas, widget controls, and the theme picker.](docs/images/noticetv-editor.png)](docs/images/noticetv-editor.png)
+[![The browser editor with a live dashboard canvas, widget controls, and the theme picker.](docs/images/ndash-editor.png)](docs/images/ndash-editor.png)
 
 | Widget          | What it brings to the screen                                                                                                             |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -29,26 +29,26 @@ and preview the whole screen before publishing. Export a layout to keep it or sh
 | **Readiness** | A 0–100 score, seven-day trend, and average from HA. |
 | **Home status & camera** | Contact and motion status, plus authenticated snapshots with update times and outage indicators. |
 | **Live video**  | HLS `.m3u8` streams, muted autoplay, fit/fill sizing, and recovery after playback interruptions.                                         |
-| **Agenda**      | Plans you enter in NoticeTV, a date rail, and a day-by-day view of the year's progress.                                                  |
+| **Agenda**      | Plans you enter in Ndash, a date rail, and a day-by-day view of the year's progress.                                                  |
 | **Note**        | Plain text for reminders, a message, or a thought for the day.                                                                           |
 | **Countdown**   | The days remaining until something you're looking forward to.                                                                            |
 | **World clock** | Another time zone, using your preferred 12- or 24-hour clock.                                                                            |
 
-[See the widget collection](docs/images/noticetv-widgets.png) · [See the phone editor](docs/images/noticetv-editor-phone.png)
+[See the widget collection](docs/images/ndash-widgets.png) · [See the phone editor](docs/images/ndash-editor-phone.png)
 
 HLS streams must be reachable from the screen and permit browser playback from your dashboard's
-address. Media plays directly in the browser; NoticeTV does not proxy or transcode it.
+address. Media plays directly in the browser; Ndash does not proxy or transcode it.
 
 **Home Assistant supplies the integrations.** Open **Add widget → Use Home layout** for weather,
 calendar, camera, climate, and readiness arranged together. Choose your HA entities in each card;
 the preset starts with empty source selections. Enable **Allow display interactions** to change
 calendar views, read event details, and enlarge snapshots on a paired screen.
 
-[![The Home layout with weather, connected calendars, camera, indoor climate, and readiness. All readings are fictional and the camera is illustrated.](docs/images/noticetv-home-widgets.png)](docs/images/noticetv-home-widgets.png)
+[![The Home layout with weather, connected calendars, camera, indoor climate, and readiness. All readings are fictional and the camera is illustrated.](docs/images/ndash-home-widgets.png)](docs/images/ndash-home-widgets.png)
 
 Explore the fictional [Home preview](http://localhost:3000/demo?home) on your local server, or see
-[the editor](docs/images/noticetv-home-widgets-editor.png) and
-[month view](docs/images/noticetv-home-widgets-month.png).
+[the editor](docs/images/ndash-home-widgets-editor.png) and
+[month view](docs/images/ndash-home-widgets-month.png).
 
 ## Find your theme
 
@@ -58,22 +58,22 @@ display setting and is off by default.
 
 | Graphite · neutral charcoal                                                                                          | Paper · light surfaces                                                                                      |
 | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [![The Graphite dashboard theme.](docs/images/noticetv-theme-graphite.png)](docs/images/noticetv-theme-graphite.png) | [![The Paper dashboard theme.](docs/images/noticetv-theme-paper.png)](docs/images/noticetv-theme-paper.png) |
+| [![The Graphite dashboard theme.](docs/images/ndash-theme-graphite.png)](docs/images/ndash-theme-graphite.png) | [![The Paper dashboard theme.](docs/images/ndash-theme-paper.png)](docs/images/ndash-theme-paper.png) |
 
-Also available: [Midnight](docs/images/noticetv-theme-midnight.png) for deep navy,
-[Ember](docs/images/noticetv-theme-ember.png) for warm charcoal and copper, and
-[Moss](docs/images/noticetv-theme-moss.png) for earthy greens.
+Also available: [Midnight](docs/images/ndash-theme-midnight.png) for deep navy,
+[Ember](docs/images/ndash-theme-ember.png) for warm charcoal and copper, and
+[Moss](docs/images/ndash-theme-moss.png) for earthy greens.
 
 ## How it fits together
 
-Run one NoticeTV server on your own machine. Open its editor on your phone or laptop and its
+Run one Ndash server on your own machine. Open its editor on your phone or laptop and its
 display page on the TV. The server stores the dashboard and supplies selected Home Assistant
 entity values. Each browser loads standalone weather and HLS media directly from its sources.
 
 ```mermaid
 flowchart LR
-    editor("Phone or laptop<br/>Dashboard editor") -->|"Save and publish"| server("NoticeTV server<br/>Saved dashboard")
-    server -->|"Published layout"| screen("Paired TV<br/>Browser or NoticeTV OS")
+    editor("Phone or laptop<br/>Dashboard editor") -->|"Save and publish"| server("Ndash server<br/>Saved dashboard")
+    server -->|"Published layout"| screen("Paired TV<br/>Browser or NdashOS")
     ha("Home Assistant<br/>Devices and integrations") -->|"Live states, forecasts,<br/>calendars, history, snapshots"| server
     server -->|"Published widget data<br/>and authenticated snapshots"| screen
     sources("Weather and HLS<br/>Data sources") -->|"Load directly"| screen
@@ -82,7 +82,7 @@ flowchart LR
     class server host;
 ```
 
-The dashboard works in a browser independently of the operating system. **NoticeTV OS** is the
+The dashboard works in a browser independently of the operating system. **NdashOS** is the
 appliance option: it turns a mini PC into a display that boots straight into your dashboard and
 recovers from browser and network problems.
 
@@ -109,7 +109,7 @@ Editing requires the server's editor key. A pairing code gives a screen viewing 
 published dashboard. Codes work once and expire after five minutes. Use the address and code
 shown by your own server.
 
-<img src="docs/images/noticetv-pairing.png" alt="The Connect a screen dialog showing a display address and a six-digit pairing code." width="490" />
+<img src="docs/images/ndash-pairing.png" alt="The Connect a screen dialog showing a display address and a six-digit pairing code." width="490" />
 
 The running display retains its last published layout during a server interruption and retries
 the connection. Starting or reloading a display still requires the server.
@@ -139,7 +139,7 @@ then add a **Home Assistant** widget and choose an entity. Credentials stay on t
 paired screens receive only selected values from the published dashboard. See the
 [Home Assistant setup guide](app/README.md#home-assistant) for connection and outage behavior.
 
-[![Home Assistant connection settings and a live entity widget, using fictional readings.](docs/images/noticetv-home-assistant.png)](docs/images/noticetv-home-assistant.png)
+[![Home Assistant connection settings and a live entity widget, using fictional readings.](docs/images/ndash-home-assistant.png)](docs/images/ndash-home-assistant.png)
 
 The default server accepts connections from this computer. Before connecting a TV or phone,
 configure its network address using the [hosting guide](app/README.md#access-from-another-device).
@@ -147,9 +147,9 @@ The guide also covers [Docker](app/README.md#docker), HTTPS, persistent storage,
 
 ## Add the TV appliance
 
-NoticeTV OS runs on an Intel or AMD mini PC connected to a TV. It starts Chromium full screen,
+NdashOS runs on an Intel or AMD mini PC connected to a TV. It starts Chromium full screen,
 recovers from browser and network problems, and installs Linux security updates. It can show
-a NoticeTV dashboard or any other web page.
+an Ndash dashboard or any other web page.
 
 **The app and OS are installed separately.** The OS image does not currently bundle the dashboard
 server. Install the server on a machine of your choice, then point the display at its `/display` page.
@@ -176,5 +176,5 @@ for the capture command and diagram sources.
 
 ## License
 
-NoticeTV is free and open source under the **[GNU AGPL v3](LICENSE)**. Fonts and dependencies retain
+Ndash is free and open source under the **[GNU AGPL v3](LICENSE)**. Fonts and dependencies retain
 their respective licenses; see [third-party notices](app/THIRD_PARTY_NOTICES.md).

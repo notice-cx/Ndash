@@ -194,7 +194,7 @@ export function Editor({
       setSelected(null);
       setToast('Layout imported into your draft.');
     } catch {
-      setError('This file is not a valid NoticeTV layout.');
+      setError('This file is not a valid Ndash layout.');
     }
     if (fileRef.current) fileRef.current.value = '';
   }
@@ -203,14 +203,14 @@ export function Editor({
     const url = URL.createObjectURL(blob);
     const link = window.document.createElement('a');
     link.href = url;
-    link.download = 'noticetv-layout.json';
+    link.download = 'ndash-layout.json';
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return (
     <main className="editor">
       <header className="editor-header">
-        <a className="brand-link" href={demo ? '/demo' : '/'} aria-label="NoticeTV editor">
+        <a className="brand-link" href={demo ? '/demo' : '/'} aria-label="Ndash editor">
           <Wordmark />
         </a>
         <span className="header-divider" />
@@ -295,8 +295,8 @@ export function Editor({
           <span>Screens</span>
         </button>
         <button
-          title="How NoticeTV works"
-          aria-label="How NoticeTV works"
+          title="How Ndash works"
+          aria-label="How Ndash works"
           onClick={() => setModal('help')}
         >
           <CircleHelp size={20} />
@@ -484,7 +484,7 @@ export function Editor({
                             ? entry.url
                               ? 'HLS stream configured'
                               : 'Add a stream URL'
-                            : 'Events entered in NoticeTV'}
+                            : 'Events entered in Ndash'}
                       </small>
                     </span>
                     <ArrowUpRight size={13} />
@@ -493,8 +493,8 @@ export function Editor({
               <div className="source-info">
                 <ShieldCheck size={20} />
                 <p>
-                  The NoticeTV server needs access to Home Assistant. Each screen needs access to
-                  its Open-Meteo weather and HLS streams.
+                  The Ndash server needs access to Home Assistant. Each screen needs access to its
+                  Open-Meteo weather and HLS streams.
                 </p>
               </div>
             </div>
@@ -705,7 +705,7 @@ export function Editor({
       {modal === 'help' && (
         <Modal
           title="A little orientation."
-          eyebrow="WELCOME TO NOTICETV"
+          eyebrow="WELCOME TO NDASH"
           close={() => setModal(null)}
         >
           <div className="guide-steps">

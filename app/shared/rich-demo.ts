@@ -155,7 +155,7 @@ export function richPreview(
       calendar: id === 'work' ? 'Work' : 'Personal',
       entityId: id === 'work' ? 'calendar.demo_work' : 'calendar.demo_personal',
       color: id === 'work' ? '#82a9d1' : '#c49fcf',
-      description: 'An example event for the NoticeTV preview.',
+      description: 'An example event for the Ndash preview.',
       location: 'Fictional preview',
     });
     const meeting = {

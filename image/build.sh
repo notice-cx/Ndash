@@ -1,8 +1,8 @@
 #!/bin/sh
-# Build the NoticeTV OS disk image: DietPi's x86_64 UEFI image, set up unattended in a VM with the
-# NoticeTV layer installed, then cleaned of everything specific to that VM.
+# Build the NdashOS disk image: DietPi's x86_64 UEFI image, set up unattended in a VM with the
+# NdashOS layer installed, then cleaned of everything specific to that VM.
 #   image/build.sh
-# Output in dist/: noticetv-os-<version>-x86_64.img.xz and its .sha256, and bake/ with the build
+# Output in dist/: ndash-os-<version>-x86_64.img.xz and its .sha256, and bake/ with the build
 # VM's logs and a screenshot of the kiosk it booted into.
 # Needs Linux with qemu-system-x86_64, OVMF, e2fsprogs, gdisk, mtools, xz, curl and coreutils.
 # With KVM the VM runs at native speed; without it, emulation takes several times longer.
@@ -20,8 +20,8 @@ OVMF_CODE=${OVMF_CODE:-/usr/share/OVMF/OVMF_CODE_4M.fd}
 OVMF_VARS=${OVMF_VARS:-/usr/share/OVMF/OVMF_VARS_4M.fd}
 DIETPI=DietPi_NativePC-UEFI-x86_64-Trixie.img
 DIETPI_URL=https://dietpi.com/downloads/images/$DIETPI.xz
-IMG=$WORK/noticetv-os.img
-OUT=noticetv-os-$VERSION-x86_64.img.xz
+IMG=$WORK/ndash-os.img
+OUT=ndash-os-$VERSION-x86_64.img.xz
 export MTOOLS_SKIP_CHECK=1
 
 step() { echo "==> $*"; }
@@ -69,11 +69,11 @@ set_key "$WORK/dietpi.txt" AUTO_SETUP_GLOBAL_PASSWORD "$(head -c 24 /dev/urandom
 sed -i 's|^\([[:blank:]]*linux[[:blank:]].*\)$|\1 console=tty1 console=ttyS0,115200|' "$WORK/grub.cfg"
 # shellcheck disable=SC2016  # expanded by update-grub, not here
 echo 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT console=tty1 console=ttyS0,115200"' \
-    > "$WORK/noticetv-bake.cfg"
+    > "$WORK/ndash-bake.cfg"
 cat > "$WORK/debugfs.cmds" << EOF
 mkdir /etc/default/grub.d
-write $WORK/noticetv-bake.cfg /etc/default/grub.d/noticetv-bake.cfg
-sif /etc/default/grub.d/noticetv-bake.cfg mode 0100644
+write $WORK/ndash-bake.cfg /etc/default/grub.d/ndash-bake.cfg
+sif /etc/default/grub.d/ndash-bake.cfg mode 0100644
 rm /boot/dietpi.txt
 write $WORK/dietpi.txt /boot/dietpi.txt
 sif /boot/dietpi.txt mode 0100644
@@ -83,12 +83,12 @@ sif /boot/grub/grub.cfg mode 0100644
 write image/Automation_Custom_Script.sh /boot/Automation_Custom_Script.sh
 sif /boot/Automation_Custom_Script.sh mode 0100755
 EOF
-for f in /boot/dietpi.txt /boot/grub/grub.cfg /boot/Automation_Custom_Script.sh /etc/default/grub.d/noticetv-bake.cfg; do
+for f in /boot/dietpi.txt /boot/grub/grub.cfg /boot/Automation_Custom_Script.sh /etc/default/grub.d/ndash-bake.cfg; do
     printf 'sif %s uid 0\nsif %s gid 0\n' "$f" "$f" >> "$WORK/debugfs.cmds"
 done
 # mkdir reports an error when grub.d already exists; debugfs carries on with the rest.
 debugfs -w -f "$WORK/debugfs.cmds" "$WORK/root.ext4" >/dev/null 2>&1
-debugfs -R "stat /etc/default/grub.d/noticetv-bake.cfg" "$WORK/root.ext4" 2>/dev/null | grep -q "User:     0" \
+debugfs -R "stat /etc/default/grub.d/ndash-bake.cfg" "$WORK/root.ext4" 2>/dev/null | grep -q "User:     0" \
     || fail "the first-boot settings could not be written into the image"
 e2fsck -fn "$WORK/root.ext4" >/dev/null || fail "the root filesystem is damaged after editing"
 dd if="$WORK/root.ext4" of="$IMG" bs=4M oflag=seek_bytes seek=$((ROOT_FIRST * 512)) \
@@ -104,7 +104,7 @@ step "Disk size: $DISK_SIZE (DietPi grows the root partition into it on first bo
 truncate -s "$DISK_SIZE" "$IMG"
 sgdisk -e "$IMG" >/dev/null
 
-step "Bake: DietPi's first run and the NoticeTV install, in a VM (log: $DIST/bake/serial.log)"
+step "Bake: DietPi's first run and the NdashOS install, in a VM (log: $DIST/bake/serial.log)"
 mkdir -p "$DIST/bake"
 cp "$OVMF_VARS" "$WORK/ovmf-vars.fd"
 if [ -w /dev/kvm ]; then
@@ -129,7 +129,7 @@ qemu-system-x86_64 -machine q35 $ACCEL -smp "$VM_CPUS" -m "$VM_MEMORY" \
     -drive id=system,if=none,format=raw,file="$IMG",discard=unmap,cache=unsafe \
     -device ide-hd,drive=system,bus=ahci.0,bootindex=0 \
     -drive id=layer,if=none,format=raw,file="$WORK/layer.tar",snapshot=on \
-    -device ide-hd,drive=layer,bus=ahci.1,serial=NOTICETVLAYER \
+    -device ide-hd,drive=layer,bus=ahci.1,serial=NDASHLAYER \
     -netdev user,id=net0 -device e1000,netdev=net0 \
     -vga none -device VGA,vgamem_mb=64,xres=3840,yres=2160 \
     -display none -monitor pipe:"$WORK/monitor" -serial file:"$DIST/bake/serial.log" &
@@ -154,12 +154,12 @@ wait "$VM" || fail "QEMU stopped with an error; see $DIST/bake/serial.log"
 
 step "Bake result"
 ESP="$IMG@@$(($(part_first "$IMG" 1) * 512))"
-mcopy -s -n -i "$ESP" ::noticetv-bake "$DIST/bake/" 2>/dev/null \
+mcopy -s -n -i "$ESP" ::ndash-bake "$DIST/bake/" 2>/dev/null \
     || fail "the build VM left no result; see $DIST/bake/serial.log"
-mdeltree -i "$ESP" ::noticetv-bake
-RESULT=$(cat "$DIST/bake/noticetv-bake/result")
-[ "$RESULT" = ok ] || fail "$RESULT; logs in $DIST/bake/noticetv-bake/logs"
-echo "    the kiosk came up; screenshot: $DIST/bake/noticetv-bake/screenshot.png"
+mdeltree -i "$ESP" ::ndash-bake
+RESULT=$(cat "$DIST/bake/ndash-bake/result")
+[ "$RESULT" = ok ] || fail "$RESULT; logs in $DIST/bake/ndash-bake/logs"
+echo "    the kiosk came up; screenshot: $DIST/bake/ndash-bake/screenshot.png"
 
 step "Compress"
 xz -T0 -6 -c "$IMG" > "$DIST/$OUT"
