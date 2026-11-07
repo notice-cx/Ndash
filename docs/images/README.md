@@ -37,6 +37,26 @@ and intercepts Open-Meteo requests with fictional responses. Copy the reviewed d
 from `app/test-results/` into this directory after changing the weather selector. The same test
 captures a phone view for review; neither view contains data from a real installation.
 
+## Boot animation
+
+`ndash-boot.webp`, at the top of the main README, shows the hero's TV powering on into the
+NdashOS boot splash and then the demo dashboard with the status bar. From `app/`:
+
+```sh
+npm run build
+npm run boot-animation
+```
+
+The script captures the demo dashboard's preview the way `npm run screenshots` does: its own
+loopback server, a temporary data directory and key, a fixed date, and every external request
+blocked. It then plays `src/boot.html` frame by frame. The scene reads the box's own splash
+(`os/rootfs/usr/share/plymouth/themes/ndash/ndash.png`), status bar lockup and icons at render
+time, lays the bar out as `os/install.sh` does on a 3840px screen with the example values of
+`ndash-statusbar.png`, and fades the splash in over 0.6 seconds as the boot theme does. Run it
+again after changing the dashboard, the splash or the status bar. It needs ImageMagick 7 and
+libwebp's `img2webp`; `NDASH_BOOT_WIDTH` and `NDASH_BOOT_QUALITY` change the output width
+(default 1200) and WebP quality (default 85).
+
 ## Diagrams
 
 The two diagrams are Mermaid code blocks in the root `README.md`; GitHub renders them directly.

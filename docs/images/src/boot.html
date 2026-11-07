@@ -1,0 +1,118 @@
+<!doctype html>
+<!-- The README's boot animation: the hero's TV on the studio wall powering on into the NdashOS
+     splash, then the kiosk's dashboard with the status bar. app/scripts/render-boot.mjs fills in
+     @DASHBOARD@ and calls setFrame(t) for each frame. The screen is a 3840x2160 panel scaled into
+     the TV, so the splash and the status bar keep the sizes the box draws them at. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html, body { margin: 0; overflow: hidden; }
+.scene { position: relative; width: 1536px; height: 768px; overflow: hidden; background: #2a241d; }
+.world { position: absolute; inset: 0; transform-origin: 0 0; }
+.photo { position: absolute; inset: 0; background: url(architectural-studio.webp) 0 -200px / 1536px 1024px no-repeat; }
+/* The TV as hero.html hangs it. */
+.tv {
+  position: absolute;
+  left: 840px;
+  top: 100px;
+  width: 600px;
+  height: 338px;
+  background: #0b0b0c;
+  border-radius: 5px;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.07),
+    16px 24px 38px rgba(74, 48, 22, 0.36),
+    5px 8px 12px rgba(52, 32, 12, 0.30);
+}
+.glass { position: absolute; inset: 5px; border-radius: 2px; overflow: hidden; background: #050506; }
+.panel { position: absolute; left: 0; top: 0; width: 3840px; height: 2160px; transform-origin: 0 0; transform: scale(calc(590 / 3840)); }
+.layer { position: absolute; inset: 0; opacity: 0; }
+.canvas { background: #0d1019; }
+/* ndash.script: the lockup centred on the canvas, at the size it is drawn for a 3840px screen. */
+.splash { display: flex; align-items: center; justify-content: center; }
+.dashboard { width: 100%; height: 100%; object-fit: cover; }
+/* The status bar as install.sh lays it out on a 3840px panel: conky's window in the bottom-right
+   corner, 16px from the edges, 14px inner margin, fixed columns; icons 7px and the lockup 6px down. */
+.bar {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 1408px;
+  height: 64px;
+  background: #000;
+  font-family: "Noto Sans", Inter, sans-serif;
+  font-size: 26.67px;
+  line-height: 36px;
+  color: #b8c2cc;
+}
+.bar img, .bar span { position: absolute; }
+.bar img { top: 21px; width: 26px; height: 26px; }
+.bar img.lockup { left: 14px; top: 20px; width: auto; height: auto; }
+.bar span { top: 14px; white-space: nowrap; }
+.ip { color: #e8b04c; }
+/* The window's light across the glass, over whatever the screen shows. */
+.glare {
+  position: absolute;
+  inset: 5px;
+  border-radius: 2px;
+  background: linear-gradient(118deg, rgba(255, 246, 230, 0.11) 0%, rgba(255, 246, 230, 0.04) 34%, rgba(255, 255, 255, 0) 35%);
+}
+</style>
+</head>
+<body>
+<div class="scene">
+  <div class="world" id="world">
+    <div class="photo"></div>
+    <div class="tv">
+      <div class="glass">
+        <div class="panel">
+          <div class="layer canvas" id="canvas"></div>
+          <div class="layer splash" id="splash"><img src="../../../os/rootfs/usr/share/plymouth/themes/ndash/ndash.png" alt=""></div>
+          <div class="layer" id="kiosk">
+            <img class="dashboard" src="@DASHBOARD@" alt="">
+            <div class="bar">
+              <img class="lockup" src="../../../os/rootfs/usr/share/ndash/statusbar-lockup.png" alt="">
+              <img style="left:205px" src="../../../os/rootfs/usr/share/ndash/icons/ip.png" alt=""><span class="ip" style="left:245px">192.168.1.50</span>
+              <img style="left:430px" src="../../../os/rootfs/usr/share/ndash/icons/wifi.png" alt=""><span style="left:470px">82%</span>
+              <img style="left:555px" src="../../../os/rootfs/usr/share/ndash/icons/temp.png" alt=""><span style="left:595px">54°C</span>
+              <img style="left:685px" src="../../../os/rootfs/usr/share/ndash/icons/watts.png" alt=""><span style="left:725px">4.1W</span>
+              <img style="left:810px" src="../../../os/rootfs/usr/share/ndash/icons/load.png" alt=""><span style="left:850px">0.32</span>
+              <img style="left:935px" src="../../../os/rootfs/usr/share/ndash/icons/ram.png" alt=""><span style="left:975px">18%</span>
+              <img style="left:1055px" src="../../../os/rootfs/usr/share/ndash/icons/disk.png" alt=""><span style="left:1095px">212GiB</span>
+              <img style="left:1220px" src="../../../os/rootfs/usr/share/ndash/icons/uptime.png" alt=""><span style="left:1260px">3d 4h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="glare"></div>
+    </div>
+  </div>
+</div>
+<script>
+// The timeline, in seconds. The splash fades in over 0.6s as ndash.script does; X keeps the
+// splash on screen until Chromium paints, so the dashboard replaces it in one frame.
+const T = { on: 0.8, splash: 1.0, kiosk: 3.2, zoomIn: 3.8, zoomed: 5.0, zoomOut: 9.0, wide: 10.2, off: 10.8, end: 11.6 };
+const clamp = (x) => Math.min(1, Math.max(0, x));
+const ease = (x) => (x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2);
+// Zoomed in, the TV fills the frame but for a margin of wall.
+const ZOOM = 2;
+const TV = { x: 1140, y: 269 };
+window.TIMELINE = T;
+window.setFrame = (t) => {
+  const screenOn = t < T.off ? clamp((t - T.on) / 0.2) : 1 - clamp((t - T.off) / 0.2);
+  const splash = t < T.kiosk ? clamp((t - T.splash) / 0.6) : 0;
+  document.getElementById('canvas').style.opacity = screenOn;
+  document.getElementById('splash').style.opacity = splash * screenOn;
+  document.getElementById('kiosk').style.opacity = t >= T.kiosk ? screenOn : 0;
+  const z = t < T.zoomOut ? ease(clamp((t - T.zoomIn) / (T.zoomed - T.zoomIn))) : 1 - ease(clamp((t - T.zoomOut) / (T.wide - T.zoomOut)));
+  const s = 1 + (ZOOM - 1) * z;
+  const tx = (768 - TV.x * ZOOM) * z;
+  const ty = (384 - TV.y * ZOOM) * z;
+  document.getElementById('world').style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+};
+window.setFrame(0);
+</script>
+</body>
+</html>
