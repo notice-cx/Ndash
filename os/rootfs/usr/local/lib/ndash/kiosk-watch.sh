@@ -9,7 +9,9 @@
 . /usr/local/lib/ndash/lib.sh
 export DISPLAY=:0 XAUTHORITY=/root/.Xauthority
 
-sleep 120
+# Chromium is up about 25 s after this service starts at boot; a kiosk that has not started by
+# the second check, 75 s in, is restarted then rather than minutes later.
+sleep 45
 misses=0   # checks in a row without Chromium
 tick=0
 blank=0    # screen checks in a row, a minute apart, that found the page blank
