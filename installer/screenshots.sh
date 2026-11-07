@@ -1,14 +1,14 @@
 #!/bin/sh
 # Boot the installer in a VM (Secure Boot on) with a blank drive, answer its questions with QEMU
 # key presses, and keep a picture of each screen; it stops before anything is written.
-#   installer/screenshots.sh dist/noticetv-installer-<version>-x86_64.img
+#   installer/screenshots.sh dist/ndash-installer-<version>-x86_64.img
 # Output: dist/installer-screens/confirm.png, wifi.png, password.png and dashboard.png, for
 # docs/images/render.sh. Needs Linux with qemu-system-x86_64, OVMF (with its Secure Boot variant)
 # and netpbm.
 set -eu
 
 cd "$(dirname "$0")/.."
-INSTALLER=${1:?usage: installer/screenshots.sh dist/noticetv-installer-<version>-x86_64.img}
+INSTALLER=${1:?usage: installer/screenshots.sh dist/ndash-installer-<version>-x86_64.img}
 WORK=${WORK:-build}/installer-screens
 OUT=${DIST:-dist}/installer-screens
 # Time for the installer to reach its first question; emulated, well over a minute.
@@ -31,7 +31,7 @@ qemu-system-x86_64 -machine q35,smm=on $ACCEL -smp 2 -m 2048 \
     -global driver=cfi.pflash01,property=secure,value=on \
     -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.secboot.fd \
     -drive if=pflash,format=raw,file="$WORK/vars.fd" \
-    -drive id=drive,if=none,format=raw,file="$WORK/drive.img" -device nvme,drive=drive,serial=NOTICETVDEMO \
+    -drive id=drive,if=none,format=raw,file="$WORK/drive.img" -device nvme,drive=drive,serial=NDASHDEMO \
     -device qemu-xhci -drive id=usb,if=none,format=raw,file="$WORK/usb.img" \
     -device usb-storage,drive=usb,bootindex=0 \
     -display none -monitor pipe:"$WORK/monitor" -serial file:"$OUT/serial.log" &

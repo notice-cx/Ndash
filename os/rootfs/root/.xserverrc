@@ -1,5 +1,5 @@
 #!/bin/sh
-# X takes the screen straight from the NoticeTV boot splash: no black flash, no console text.
+# X takes the screen straight from the NdashOS boot splash: no black flash, no console text.
 # Plymouth lets go of the display but leaves the logo on it; X starts on the splash's VT (vt1,
 # the autologin console, hence -keeptty) and keeps the logo as its background (-background none)
 # until Chromium paints. Plymouth then quits, leaving the screen to X. Same hand-off as GDM's.

@@ -37,7 +37,7 @@ function bounded<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
         finish(() =>
           reject(
             new HomeAssistantError(
-              'Home Assistant did not respond. Check its address and network access from the NoticeTV server.',
+              'Home Assistant did not respond. Check its address and network access from the Ndash server.',
             ),
           ),
         ),
@@ -168,7 +168,7 @@ class LiveConnection {
       throw new HomeAssistantError(
         error === ERR_INVALID_AUTH
           ? 'Home Assistant rejected the token. Create a new long-lived access token in your Home Assistant profile.'
-          : 'Could not read Home Assistant entities. Check the address, token permissions, and network access from the NoticeTV server.',
+          : 'Could not read Home Assistant entities. Check the address, token permissions, and network access from the Ndash server.',
       );
     } finally {
       clearTimeout(deadline);
@@ -330,7 +330,7 @@ export class HomeAssistantConnection {
 
   configure(input: unknown) {
     return this.serialize(async () => {
-      if (this.stopped) throw new HomeAssistantError('The NoticeTV server is stopping.');
+      if (this.stopped) throw new HomeAssistantError('The Ndash server is stopping.');
       const parsed = connectionInputSchema.parse(input);
       const token =
         parsed.token || (parsed.url === this.credentials?.url ? this.credentials.token : undefined);

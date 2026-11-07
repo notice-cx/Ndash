@@ -100,9 +100,6 @@ button svg {
   align-items: baseline;
   white-space: nowrap;
 }
-.wordmark > span {
-  color: var(--secondary);
-}
 .wordmark > i {
   width: 4px;
   height: 4px;
@@ -1845,9 +1842,6 @@ button svg {
   color: var(--muted);
   font-weight: 450;
   letter-spacing: -0.7px;
-}
-.board-wordmark > span {
-  color: var(--muted);
 }
 .board-wordmark > i {
   width: 3px;

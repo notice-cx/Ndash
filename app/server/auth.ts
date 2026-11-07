@@ -3,13 +3,13 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 export type Role = 'editor' | 'display';
-const COOKIE = 'noticetv_session';
+const COOKIE = 'ndash_session';
 
 export async function loadEditorKey(directory: string) {
-  const configured = process.env.NOTICETV_EDITOR_KEY;
+  const configured = process.env.NDASH_EDITOR_KEY;
   if (configured) {
     if (configured.length < 24 || configured.length > 256)
-      throw new Error('NOTICETV_EDITOR_KEY must have 24 to 256 characters.');
+      throw new Error('NDASH_EDITOR_KEY must have 24 to 256 characters.');
     return configured;
   }
   await mkdir(directory, { recursive: true, mode: 0o700 });
@@ -24,7 +24,7 @@ export async function loadEditorKey(directory: string) {
   }
   const key = (await readFile(filename, 'utf8')).trim();
   if (key.length < 24 || key.length > 256)
-    throw new Error('The editor-key file is invalid. Restore it before starting NoticeTV.');
+    throw new Error('The editor-key file is invalid. Restore it before starting Ndash.');
   return key;
 }
 

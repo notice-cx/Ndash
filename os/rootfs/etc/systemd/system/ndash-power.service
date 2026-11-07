@@ -1,0 +1,9 @@
+[Unit]
+Description=NdashOS: apply the power profile from ndash.conf
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/ndash/power.sh
+
+[Install]
+WantedBy=multi-user.target

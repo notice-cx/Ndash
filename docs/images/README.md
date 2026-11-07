@@ -29,9 +29,9 @@ reference is not included in the repository. These previews make no HA or extern
 
 The script writes seventeen PNGs into this directory. Review them after interface changes, then commit
 the updated images alongside the relevant documentation. The screenshots contain no data from a
-real installation. `NOTICETV_DOCS_PORT` selects another local port if the default, 3002, is busy.
+real installation. `NDASH_DOCS_PORT` selects another local port if the default, 3002, is busy.
 
-`noticetv-weather-sensor.png` and `noticetv-second-location.png` are the editor captures from
+`ndash-weather-sensor.png` and `ndash-second-location.png` are the editor captures from
 `npm run test:browser -- weather-sensor.spec.ts`. That test uses a synthetic loopback HA server
 and intercepts Open-Meteo requests with fictional responses. Copy the reviewed desktop captures
 from `app/test-results/` into this directory after changing the weather selector. The same test

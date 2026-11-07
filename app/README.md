@@ -1,7 +1,7 @@
-# NoticeTV dashboard
+# Ndash dashboard
 
 A browser editor, a passive TV display, and a small Node.js server. The application runs
-independently of NoticeTV OS and does not require Home Assistant.
+independently of NdashOS and does not require Home Assistant.
 
 ## Development
 
@@ -20,11 +20,11 @@ when the server starts, stored outside source control, and never sent to a displ
 both browsers will use before starting it:
 
 ```sh
-NOTICETV_ORIGIN="http://YOUR_LAN_IP:3000" npm run dev
+NDASH_ORIGIN="http://YOUR_LAN_IP:3000" npm run dev
 ```
 
 Replace `YOUR_LAN_IP` with your computer's LAN IP, then open that address on both
-devices. Set `NOTICETV_HOST=127.0.0.1` to restrict development to this computer.
+devices. Set `NDASH_HOST=127.0.0.1` to restrict development to this computer.
 
 The demo is temporary. Its Save and Publish buttons explain how to open a real workspace;
 Export layout downloads the current demo configuration.
@@ -46,7 +46,7 @@ From `app/`:
 
 ```sh
 docker compose up --build -d
-docker compose exec noticetv npm run access-key
+docker compose exec ndash npm run access-key
 ```
 
 Open `http://localhost:3000/`. Configuration and the editor key live in the `dashboard-data`
@@ -60,34 +60,34 @@ home-network Docker instance, copy `.env.example` to
 `.env` and set the address that **both the editor and every screen** will use:
 
 ```dotenv
-NOTICETV_ORIGIN=http://noticetv.local:3000
-NOTICETV_BIND_ADDRESS=0.0.0.0
-NOTICETV_SECURE_COOKIES=0
+NDASH_ORIGIN=http://ndash.local:3000
+NDASH_BIND_ADDRESS=0.0.0.0
+NDASH_SECURE_COOKIES=0
 ```
 
-`noticetv.local` is an example; configure a hostname that resolves to your server. Restart
-Compose after changing these values. For npm rather than Docker, export `NOTICETV_ORIGIN`
-and `NOTICETV_HOST=0.0.0.0` in the server's shell. npm does not load `.env` files.
+`ndash.local` is an example; configure a hostname that resolves to your server. Restart
+Compose after changing these values. For npm rather than Docker, export `NDASH_ORIGIN`
+and `NDASH_HOST=0.0.0.0` in the server's shell. npm does not load `.env` files.
 
 The server accepts only its configured Host and Origin. An alternate hostname or IP is
 intentionally rejected. This prevents another website from using the local editor through a
 forged origin or DNS rebinding.
 
 For access over the internet, serve the app through an HTTPS reverse proxy, set
-`NOTICETV_ORIGIN` to its public HTTPS origin and `NOTICETV_SECURE_COOKIES=1`, and preserve the
+`NDASH_ORIGIN` to its public HTTPS origin and `NDASH_SECURE_COOKIES=1`, and preserve the
 original Host header. The server does not trust forwarded authentication or proxy IP headers.
 HTTP sources may be blocked as mixed content on an HTTPS dashboard; use HTTPS sources there.
 
 ### Configuration
 
-| Variable                  | Default                                   | Meaning                                                       |
-| ------------------------- | ----------------------------------------- | ------------------------------------------------------------- |
-| `PORT`                    | `3000`                                    | Server port.                                                  |
-| `NOTICETV_HOST`           | Dev: `0.0.0.0`; built server: `127.0.0.1` | Listener address; Docker uses `0.0.0.0` inside its container. |
-| `NOTICETV_ORIGIN`         | `http://localhost:3000`                   | The single browser origin accepted by the server.             |
-| `NOTICETV_DATA_DIR`       | `app/.data`                               | Dashboard and key directory; Docker uses `/data`.             |
-| `NOTICETV_EDITOR_KEY`     | Generated file                            | Override with a secret of 24 to 256 characters.               |
-| `NOTICETV_SECURE_COOKIES` | `0`                                       | Use `1` when the browser connects over HTTPS.                 |
+| Variable               | Default                                   | Meaning                                                       |
+| ---------------------- | ----------------------------------------- | ------------------------------------------------------------- |
+| `PORT`                 | `3000`                                    | Server port.                                                  |
+| `NDASH_HOST`           | Dev: `0.0.0.0`; built server: `127.0.0.1` | Listener address; Docker uses `0.0.0.0` inside its container. |
+| `NDASH_ORIGIN`         | `http://localhost:3000`                   | The single browser origin accepted by the server.             |
+| `NDASH_DATA_DIR`       | `app/.data`                               | Dashboard and key directory; Docker uses `/data`.             |
+| `NDASH_EDITOR_KEY`     | Generated file                            | Override with a secret of 24 to 256 characters.               |
+| `NDASH_SECURE_COOKIES` | `0`                                       | Use `1` when the browser connects over HTTPS.                 |
 
 Relative data paths resolve from the working directory. Run one server process per data directory.
 Keep credentials in environment configuration or the protected data directory.
@@ -110,13 +110,13 @@ Choose a theme in dashboard settings. The canvas and display preview update imme
 as a draft or publish it to connected screens, just like a layout change. Theme choices are also
 included in layout imports and exports.
 
-| Theme                                                  | Appearance                         |
-| ------------------------------------------------------ | ---------------------------------- |
-| [Graphite](../docs/images/noticetv-theme-graphite.png) | Neutral charcoal; the default.     |
-| [Midnight](../docs/images/noticetv-theme-midnight.png) | Deep navy with blue accents.       |
-| [Paper](../docs/images/noticetv-theme-paper.png)       | Light surfaces with dark text.     |
-| [Ember](../docs/images/noticetv-theme-ember.png)       | Warm charcoal with copper accents. |
-| [Moss](../docs/images/noticetv-theme-moss.png)         | Earthy greens.                     |
+| Theme                                               | Appearance                         |
+| --------------------------------------------------- | ---------------------------------- |
+| [Graphite](../docs/images/ndash-theme-graphite.png) | Neutral charcoal; the default.     |
+| [Midnight](../docs/images/ndash-theme-midnight.png) | Deep navy with blue accents.       |
+| [Paper](../docs/images/ndash-theme-paper.png)       | Light surfaces with dark text.     |
+| [Ember](../docs/images/ndash-theme-ember.png)       | Warm charcoal with copper accents. |
+| [Moss](../docs/images/ndash-theme-moss.png)         | Earthy greens.                     |
 
 Themes apply to widget surfaces, text, notes, charts, and the area surrounding the display.
 Video content retains its original colors. The editor, sign-in page, and dialogs use neutral
@@ -152,7 +152,7 @@ source addresses and event content; they are configuration backups.
   or K follow the dashboard's temperature units. An unavailable or unsupported reading shows
   a dash; interrupted connections retain the last known reading with its update time. The sensor
   can display its temperature before a forecast location is selected and during forecast outages.
-  [See the weather sensor selector](../docs/images/noticetv-weather-sensor.png).
+  [See the weather sensor selector](../docs/images/ndash-weather-sensor.png).
 - **HLS:** provide an HTTP or HTTPS playlist URL that permits anonymous browser playback from the
   dashboard's origin, including its segments and keys. Streams start muted, use native HLS or
   hls.js, and retry fatal errors and stalled playback with delays up to thirty seconds. Hidden
@@ -172,22 +172,22 @@ The OS image does not automatically install the app.
 
 ### Home Assistant
 
-Home Assistant owns your devices and third-party integrations. NoticeTV reads their states,
+Home Assistant owns your devices and third-party integrations. Ndash reads their states,
 forecasts, calendars, recorder history, and camera snapshots through one shared connection;
-each screen connects only to NoticeTV for this data.
+each screen connects only to Ndash for this data.
 
 1. In Home Assistant, create a **long-lived access token** in your account profile.
    Use an account with access to the entities you want to display.
-2. In NoticeTV, open **Sources**, enter the **Home Assistant address** and **Access token**, and
-   choose **Connect Home Assistant**. Use the address reachable from the NoticeTV server, without
+2. In Ndash, open **Sources**, enter the **Home Assistant address** and **Access token**, and
+   choose **Connect Home Assistant**. Use the address reachable from the Ndash server, without
    a path. Saving verifies authentication, state access, and the live subscription before replacing
    a saved connection. A failed replacement preserves the working connection.
 3. Add a **Home Assistant** widget, search by entity name or ID, and choose an entity. The widget
    shows its current state and HA-provided unit. Save a draft or publish it as usual.
 
-[![Searchable entity selection with a fictional temperature reading.](../docs/images/noticetv-home-assistant-widget.png)](../docs/images/noticetv-home-assistant-widget.png)
+[![Searchable entity selection with a fictional temperature reading.](../docs/images/ndash-home-assistant-widget.png)](../docs/images/ndash-home-assistant-widget.png)
 
-[See connection setup on a phone](../docs/images/noticetv-home-assistant-phone.png).
+[See connection setup on a phone](../docs/images/ndash-home-assistant-phone.png).
 
 The server uses HA's [WebSocket API](https://contributors.home-assistant.io/core/internals/websocket-api/)
 through the official JavaScript client for authenticated reads and state-change subscriptions.
@@ -196,7 +196,7 @@ with the services behind HA. The initial connection check is bounded to ten seco
 detects a silent connection failure; disconnected connections retry automatically. Revoked tokens
 require a new token in Sources.
 
-Visible widgets request their selected values from NoticeTV every two seconds. During an outage,
+Visible widgets request their selected values from Ndash every two seconds. During an outage,
 running screens retain readings and label them **Last known reading**, with the entity's update
 time. HA states of `unknown` or `unavailable` show an unavailable reading. Reconnection replaces
 the cache with a full snapshot, including entity removals. A server restart needs HA to obtain
@@ -234,9 +234,9 @@ HA entities in each widget. The connection itself stays in Sources.
 | **Home weather**       | Choose a `weather` entity for conditions and daily forecasts. HA hourly or twice-daily forecasts are grouped into local days. Selected outdoor temperature/humidity sensors override the weather entity's current values when available. US AQI uses a selected sensor. For the second location, search for a town/city with Open-Meteo or choose another HA weather entity. The strip shows current conditions and five future days. Sun times use HA's home location and selected sun entity; moon phases are calculated locally with SunCalc. |
 | **Connected calendar** | Select up to eight HA calendars, their names/colors, and which should produce meeting reminders. Reminders cover the next three hours and exclude all-day events and calendars named as TV schedules. Filters cover finished/declined/duplicate/multi-day events and comma-separated hidden-title phrases. All-day end dates are exclusive and respect the dashboard time zone across daylight-saving changes.                                                                                                                                   |
 | **Indoor climate**     | Select up to two temperature sensors or thermostat entities, plus a CO₂ sensor. Thermostats use measured `current_temperature`, rather than their target setting. The charts show 24 hours of recorder history, including attribute-only changes. The second temperature has a dashed line; unavailable readings leave gaps.                                                                                                                                                                                                                     |
-| **Readiness**          | Select a 0–100 score entity. The card shows the current score, seven-day recorder trend, and average of available recorded readings. Missing or out-of-range scores show unavailable. No Oura account or provider credentials are needed in NoticeTV.                                                                                                                                                                                                                                                                                            |
+| **Readiness**          | Select a 0–100 score entity. The card shows the current score, seven-day recorder trend, and average of available recorded readings. Missing or out-of-range scores show unavailable. No Oura account or provider credentials are needed in Ndash.                                                                                                                                                                                                                                                                                               |
 | **Home status**        | Select up to twelve binary contact sensors (`on` means open) and a motion sensor. Unavailable or missing contacts are counted separately and never reported as closed.                                                                                                                                                                                                                                                                                                                                                                           |
-| **Camera**             | Select an HA camera and a motion sensor. Authenticated snapshots refresh every 20 seconds while visible. The update time records when NoticeTV fetched the image; it does not establish the camera frame's original capture time. This is a snapshot widget, separate from the anonymous HLS stream widget.                                                                                                                                                                                                                                      |
+| **Camera**             | Select an HA camera and a motion sensor. Authenticated snapshots refresh every 20 seconds while visible. The update time records when Ndash fetched the image; it does not establish the camera frame's original capture time. This is a snapshot widget, separate from the anonymous HLS stream widget.                                                                                                                                                                                                                                         |
 
 Temperature readings and histories support HA's Celsius, Fahrenheit, and Kelvin units, displayed
 in the dashboard's Celsius/Fahrenheit preference. Unknown temperature units remain unavailable.
@@ -247,7 +247,7 @@ search. Select a result to save its name and coordinates in the layout. Open-Met
 directly from the screen every fifteen minutes, using that location's forecast dates and the
 dashboard's temperature units. The approximate city coordinates are sent to Open-Meteo. Existing
 second-location HA entity selections keep working; choose **Off** to hide the strip.
-[See the second-location configuration](../docs/images/noticetv-second-location.png).
+[See the second-location configuration](../docs/images/ndash-second-location.png).
 
 For multiple HA calendars, add a **Connected calendar** widget (its default title is **The week
 ahead**). Choose each entity with **Add calendar**; up to eight calendars share the view, with

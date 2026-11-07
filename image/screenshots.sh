@@ -1,15 +1,15 @@
 #!/bin/sh
-# Boot a built NoticeTV OS image in a VM with a 4K screen and keep pictures of it: for the README,
+# Boot a built NdashOS image in a VM with a 4K screen and keep pictures of it: for the README,
 # and for seeing what a build looks like on a TV.
-#   image/screenshots.sh dist/noticetv-os-<version>-x86_64.img.xz [dashboard URL]
+#   image/screenshots.sh dist/ndash-os-<version>-x86_64.img.xz [dashboard URL]
 # Output: dist/screenshots/screen-NNN.png, one every EVERY seconds (default 15), SHOTS of them
-# (default 60). With a URL the kiosk shows it instead of the NoticeTV start page. The VM runs
-# this checkout's NoticeTV scripts, so changes to them show without a new build.
+# (default 60). With a URL the kiosk shows it instead of the NdashOS start page. The VM runs
+# this checkout's NdashOS scripts, so changes to them show without a new build.
 # Needs Linux with qemu-system-x86_64, OVMF, e2fsprogs, gdisk, xz and netpbm.
 set -eu
 
 cd "$(dirname "$0")/.."
-IMAGE=${1:?usage: image/screenshots.sh dist/noticetv-os-<version>-x86_64.img.xz [dashboard URL]}
+IMAGE=${1:?usage: image/screenshots.sh dist/ndash-os-<version>-x86_64.img.xz [dashboard URL]}
 URL=${2:-}
 WORK=${WORK:-build}/screenshots
 OUT=${DIST:-dist}/screenshots
@@ -22,7 +22,7 @@ rm -rf "$WORK" "$OUT"
 mkdir -p "$WORK" "$OUT"
 xz -dc "$IMAGE" > "$WORK/disk.img"
 
-# Into the image's root filesystem: this checkout's NoticeTV scripts, the dashboard URL, and
+# Into the image's root filesystem: this checkout's NdashOS scripts, the dashboard URL, and
 # software rendering for Chromium, whose GPU process crashes on a VM's emulated graphics card.
 FIRST=$(sgdisk -i 2 "$WORK/disk.img" | awk '/^First sector:/{print $3}')
 LAST=$(sgdisk -i 2 "$WORK/disk.img" | awk '/^Last sector:/{print $3}')
@@ -39,14 +39,14 @@ echo 'export CHROMIUM_FLAGS="$CHROMIUM_FLAGS --disable-gpu --disable-features=Va
     echo "rm /boot/dietpi.txt"
     echo "write $WORK/dietpi.txt /boot/dietpi.txt"
     echo "write $WORK/vm-flags /etc/chromium.d/zz-vm"
-    for f in os/rootfs/usr/local/lib/noticetv/*; do
-        echo "rm /usr/local/lib/noticetv/${f##*/}"
-        echo "write $f /usr/local/lib/noticetv/${f##*/}"
-        echo "sif /usr/local/lib/noticetv/${f##*/} mode 0100755"
+    for f in os/rootfs/usr/local/lib/ndash/*; do
+        echo "rm /usr/local/lib/ndash/${f##*/}"
+        echo "write $f /usr/local/lib/ndash/${f##*/}"
+        echo "sif /usr/local/lib/ndash/${f##*/} mode 0100755"
     done
-    for f in /boot/dietpi.txt /etc/chromium.d/zz-vm os/rootfs/usr/local/lib/noticetv/*; do
+    for f in /boot/dietpi.txt /etc/chromium.d/zz-vm os/rootfs/usr/local/lib/ndash/*; do
         target=$f
-        case "$f" in os/*) target=/usr/local/lib/noticetv/${f##*/} ;; esac
+        case "$f" in os/*) target=/usr/local/lib/ndash/${f##*/} ;; esac
         printf 'sif %s uid 0\nsif %s gid 0\n' "$target" "$target"
     done
 } > "$WORK/debugfs.cmds"

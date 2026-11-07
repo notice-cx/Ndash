@@ -1,6 +1,6 @@
-# Contributing to NoticeTV
+# Contributing to Ndash
 
-NoticeTV has two independently runnable parts: the dashboard in `app/` and the display appliance
+Ndash has two independently runnable parts: the dashboard in `app/` and the display appliance
 in `os/`, `image/`, and `installer/`. Keep changes focused on the relevant part, and read
 [AGENTS.md](AGENTS.md) for repository conventions.
 

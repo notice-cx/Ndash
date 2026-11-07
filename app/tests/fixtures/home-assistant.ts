@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { WebSocketServer, type WebSocket } from 'ws';
 import type { HassEntity } from 'home-assistant-js-websocket';
 
-export const fixtureToken = 'noticetv-home-assistant-fixture-token';
+export const fixtureToken = 'ndash-home-assistant-fixture-token';
 export const fixtureAttributeSecret = 'fixture-attribute-secret-never-forward';
 
 function entity(id: string, state: string, attributes: HassEntity['attributes']): HassEntity {

@@ -21,7 +21,7 @@ let server: Server | undefined;
 const selected = 'sensor.living_room_temperature';
 
 beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), 'noticetv-ha-test-'));
+  directory = await mkdtemp(join(tmpdir(), 'ndash-ha-test-'));
   fixture = await startHomeAssistantFixture();
   connection = await new HomeAssistantConnection(directory).initialize();
 });

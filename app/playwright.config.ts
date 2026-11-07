@@ -19,8 +19,8 @@ export default defineConfig({
     env: {
       NODE_ENV: 'production',
       PORT: '3001',
-      NOTICETV_ORIGIN: 'http://localhost:3001',
-      NOTICETV_EDITOR_KEY: 'noticetv-browser-test-fixture-only',
+      NDASH_ORIGIN: 'http://localhost:3001',
+      NDASH_EDITOR_KEY: 'ndash-browser-test-fixture-only',
     },
   },
 });

@@ -1,13 +1,13 @@
 services:
-  noticetv:
+  ndash:
     build: .
     init: true
     restart: unless-stopped
     ports:
-      - '${NOTICETV_BIND_ADDRESS:-127.0.0.1}:3000:3000'
+      - '${NDASH_BIND_ADDRESS:-127.0.0.1}:3000:3000'
     environment:
-      NOTICETV_ORIGIN: '${NOTICETV_ORIGIN:-http://localhost:3000}'
-      NOTICETV_SECURE_COOKIES: '${NOTICETV_SECURE_COOKIES:-0}'
+      NDASH_ORIGIN: '${NDASH_ORIGIN:-http://localhost:3000}'
+      NDASH_SECURE_COOKIES: '${NDASH_SECURE_COOKIES:-0}'
     volumes:
       - dashboard-data:/data
 

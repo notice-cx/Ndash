@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- The Notice lockup as NoticeOS draws it (BrandLockup): the mark, then the name in Stack Sans
-     Notch, "Notice" at 600 with tight tracking and the suffix lighter in the muted ink.
+<!-- The NdashOS lockup, drawn the way NoticeOS draws its own (BrandLockup): the Notice mark, then the
+     name in Stack Sans Notch, "Ndash" at 600 with tight tracking and the suffix lighter in the muted ink.
      render.sh fills in @FONT@ (base64 woff2), @SUFFIX@, @SIZE@ (font size in px) and @BACKGROUND@. -->
 <html><head><meta charset="utf-8"><style>
 @font-face { font-family: "Stack Sans Notch"; src: url(data:font/woff2;base64,@FONT@) format("woff2"); font-weight: 100 900; }
@@ -14,6 +14,6 @@ body { display: flex; align-items: center; justify-content: center; }
 </style></head><body>
 <span class="lockup">
   <svg viewBox="0 0 354 394" class="mark"><path fill-rule="evenodd" fill="currentColor" d="M0 0H354V394H0ZM100 0H237V137ZM117 137H237V257H117ZM117 257V394H254Z"/></svg>
-  <span class="name">Notice<span class="suffix">@SUFFIX@</span></span>
+  <span class="name">Ndash<span class="suffix">@SUFFIX@</span></span>
 </span>
 </body></html>

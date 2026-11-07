@@ -1,6 +1,6 @@
 # Third-party notices
 
-NoticeTV's application code is licensed under the GNU AGPL v3 in the repository root.
+Ndash's application code is licensed under the GNU AGPL v3 in the repository root.
 Dependencies retain their original licenses. Exact versions and integrity hashes are in
 `package-lock.json`; dependency distributions contain their license texts. The build also copies
 browser dependency licenses into `dist/licenses/`, served at `/licenses/`.
@@ -19,8 +19,8 @@ browser dependency licenses into `dist/licenses/`, served at `/licenses/`.
 | Inter                       | SIL Open Font License 1.1 | `public/fonts/Inter-LICENSE.txt`                              |
 | Stack Sans Notch            | SIL Open Font License 1.1 | `public/fonts/StackSansNotch-LICENSE.txt`                     |
 
-The fonts are shared with NoticeTV's existing brand assets. The coast and front-door illustrations, fictional
-demo content, and dashboard styling are original NoticeTV assets. No broadcaster footage,
+The fonts are shared with Ndash's existing brand assets. The coast and front-door illustrations, fictional
+demo content, and dashboard styling are original Ndash assets. No broadcaster footage,
 home-camera image, publisher logo, or data from a real household is bundled.
 
 Weather comes from [Open-Meteo](https://open-meteo.com/) and is attributed in the widget.

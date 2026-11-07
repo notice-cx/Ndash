@@ -134,7 +134,7 @@ export function Dashboard({
       </div>
       <footer className="dashboard-footer">
         <span className="board-wordmark">
-          Notice<span>TV</span>
+          Ndash
           <i />
         </span>
         <span>

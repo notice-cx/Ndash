@@ -31,7 +31,7 @@ export async function api<T>(
   });
   const data = await response.json();
   if (!response.ok)
-    throw new ApiError(data.error || 'NoticeTV could not complete this request.', response.status);
+    throw new ApiError(data.error || 'Ndash could not complete this request.', response.status);
   return data as T;
 }
 

@@ -1,6 +1,6 @@
 # Hardware
 
-## Boxes NoticeTV OS has run on
+## Boxes NdashOS has run on
 
 ### Intel Celeron N4500 fanless mini PC
 
@@ -42,9 +42,9 @@ alone was enough.
 
 **Made worse by reconnects**: on a weak link (about -70 dBm), DietPi's Wi-Fi monitor rebuilt the
 connection 14 times in one hour, each time on a single lost ping and each time cycling the card
-through its power states. NoticeTV replaces it with `noticetv-wifi-watch`, which reconnects only
+through its power states. NdashOS replaces it with `ndash-wifi-watch`, which reconnects only
 after about 90 seconds without an answer from the router.
 
-**Fix**: `os/rootfs/etc/modprobe.d/noticetv-rtw88.conf` sets `disable_aspm=y` and
+**Fix**: `os/rootfs/etc/modprobe.d/ndash-rtw88.conf` sets `disable_aspm=y` and
 `disable_lps_deep=y`; the watchdog reboots the box if it freezes anyway. The lasting fix is a
 better-supported card: an Intel AX210 fits the same M.2 slot.

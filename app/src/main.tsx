@@ -18,7 +18,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean
         <h1>Let’s bring the view back.</h1>
         <p>Your published dashboard is saved on the server.</p>
         <button className="primary-button" onClick={() => location.reload()}>
-          Reload NoticeTV
+          Reload Ndash
         </button>
       </main>
     ) : (

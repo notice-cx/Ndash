@@ -139,8 +139,7 @@ export function HomeAssistantSetup({ demo }: { demo: boolean }) {
             )}
           </p>
           <p className="field-hint">
-            Home Assistant supplies the data. NoticeTV reads it through this shared server
-            connection.
+            Home Assistant supplies the data. Ndash reads it through this shared server connection.
           </p>
           <form
             onSubmit={(event) => {

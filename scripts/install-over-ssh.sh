@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copy the NoticeTV OS layer to a box over SSH and run its installer there.
+# Copy the NdashOS layer to a box over SSH and run its installer there.
 #   scripts/install-over-ssh.sh <ssh-host>        e.g. root@192.168.1.50
 # Streams a tar archive rather than using scp: DietPi's default SSH server (Dropbear) has no SFTP.
 set -eu
@@ -14,4 +14,4 @@ if tar --version | grep -q bsdtar; then
 fi
 # shellcheck disable=SC2086  # TAR_FLAGS is empty or one flag
 COPYFILE_DISABLE=1 tar $TAR_FLAGS -cf - . | ssh "$HOST" \
-    'rm -rf /opt/noticetv && mkdir -p /opt/noticetv && tar -C /opt/noticetv -xf - --no-same-owner && /opt/noticetv/install.sh'
+    'rm -rf /opt/ndash && mkdir -p /opt/ndash && tar -C /opt/ndash -xf - --no-same-owner && /opt/ndash/install.sh'
