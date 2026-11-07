@@ -27,6 +27,7 @@ import type { HomeAssistantData } from '../shared/home-assistant';
 import { isRichWidget, widgetEntityIds } from '../shared/rich-widgets';
 import { numeric, temperatureValue } from '../shared/ha-data';
 import { RichWidgetView } from './RichWidgets';
+import { NoticeMark } from './NoticeMark';
 
 export function useNow(interval = 1000) {
   const [now, setNow] = useState(() => new Date());
@@ -133,8 +134,9 @@ export function Dashboard({
         })}
       </div>
       <footer className="dashboard-footer">
-        <span className="board-wordmark">
-          Ndash
+        <span className="board-wordmark" role="img" aria-label="Ndash">
+          <NoticeMark className="wordmark-n" />
+          dash
           <i />
         </span>
         <span>

@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 import type { Dashboard as DashboardData } from '../shared/dashboard';
+import { NoticeMark } from './NoticeMark';
 import { Dashboard } from './Dashboard';
 
 export function Wordmark() {
   return (
-    <span className="wordmark">
-      Ndash
+    <span className="wordmark" role="img" aria-label="Ndash">
+      <NoticeMark className="wordmark-n" />
+      dash
       <i />
     </span>
   );
