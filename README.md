@@ -6,9 +6,9 @@ A self-hosted dashboard for the screen in your room. Bring together the weather,
 live video, and the things worth looking up for. Configure it from your phone or laptop,
 then publish it to your TV.
 
-[![The Ndash display in Graphite, showing weather, an agenda, an illustrated stream, a note, and a countdown.](docs/images/ndash-dashboard.png)](docs/images/ndash-dashboard.png)
+[![A TV on a sunlit wall turns on, shows the NdashOS boot screen, then an Ndash dashboard with weather, an agenda, an illustrated stream, a note, a countdown, and the NdashOS status bar.](docs/images/ndash-boot.webp)](docs/images/ndash-boot.webp)
 
-_Screenshots use fictional demo data. The stream tile is an illustration; configured HLS streams play video._
+_The animation and screenshots use fictional demo data. The stream tile is an illustration; configured HLS streams play video._
 
 [Try it locally](#try-it-locally) · [Hosting guide](app/README.md) · [Install NdashOS](docs/operating-system.md) · [Contribute](CONTRIBUTING.md)
 
@@ -93,6 +93,8 @@ recovers from browser and network problems.
 3. **Publish.** Connected screens pick up the new view within ten seconds.
 4. **Connect a screen.** Open your server's `/display` page on the TV and enter the code from
    **Connect a screen** in the editor. Pairing can happen before or after the first publication.
+
+[![The Ndash display in Graphite, showing weather, an agenda, an illustrated stream, a note, and a countdown.](docs/images/ndash-dashboard.png)](docs/images/ndash-dashboard.png)
 
 ```mermaid
 flowchart LR
