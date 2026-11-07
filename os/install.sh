@@ -94,7 +94,7 @@ write_statusbar_conf() {
     LOCKUP=/usr/share/ndash/statusbar-lockup.png
     # shellcheck disable=SC2046  # png_size prints "width height"
     set -- $(png_size "$LOCKUP")
-    add 205 "\${image $LOCKUP -p 0,$(px 6) -s $(px "$1")x$(px "$2")}"
+    add 185 "\${image $LOCKUP -p 0,$(px 6) -s $(px "$1")x$(px "$2")}"
     # Each field: its icon (brand/render.sh), then the value. Icons are images, 7px down to centre
     # them on the text: an icon font would shift conky's baseline at every font switch. conky
     # measures images from inside border_inner_margin but goto from the window's edge, hence -14.

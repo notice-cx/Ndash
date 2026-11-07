@@ -95,10 +95,19 @@ button svg {
   font-family: 'Stack Sans Notch', Inter, sans-serif;
   font-weight: 500;
   font-size: 25px;
-  letter-spacing: -1.2px;
+  letter-spacing: 0.02em;
   display: inline-flex;
   align-items: baseline;
   white-space: nowrap;
+}
+/* The Notice mark as the wordmark's N: 0.95em tall on the baseline, above the capitals (0.7em),
+   followed by the N's own side bearing (7.5% of the mark's height) and the wordmark's tracking. */
+.wordmark-n {
+  height: 0.95em;
+  width: auto;
+  aspect-ratio: 354 / 394;
+  flex-shrink: 0;
+  margin-right: calc(0.95 * 0.075em + 0.02em);
 }
 .wordmark > i {
   width: 4px;
@@ -1841,7 +1850,7 @@ button svg {
   font-size: 16px;
   color: var(--muted);
   font-weight: 450;
-  letter-spacing: -0.7px;
+  letter-spacing: 0.02em;
 }
 .board-wordmark > i {
   width: 3px;
